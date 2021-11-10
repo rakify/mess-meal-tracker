@@ -2,6 +2,9 @@ import {
   loginFailure,
   loginStart,
   loginSuccess,
+  updateUserStart,
+  updateUserSuccess,
+  updateUserFailure,
   } from "./userRedux";
 import {
   getEntriesStart,
@@ -28,6 +31,16 @@ export const logout = async () => {
   window.location = "/login";
 };
 
+export const updateUser = async (id, user, dispatch) => {
+  dispatch(updateUserStart());
+  try {
+    const res = await axios.put(`/auth/${id}`, {members: user});
+    dispatch(updateUserSuccess(res.data));
+  } catch (err) {
+    dispatch(updateUserFailure(err.response.data));
+  }
+};
+
 export const login = async (dispatch, user) => {
   dispatch(loginStart());
   try {
@@ -38,10 +51,10 @@ export const login = async (dispatch, user) => {
   }
 };
 
-export const getEntry = async (dispatch) => {
+export const getEntry = async (username, dispatch) => {
   dispatch(getEntriesStart());
   try {
-    const res = await axios.get("/Entries");
+    const res = await axios.get(`/entries/${username}`);
     dispatch(getEntriesSuccess(res.data));
   } catch (err) {
     dispatch(getEntriesFailure());

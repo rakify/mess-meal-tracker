@@ -4,10 +4,13 @@ import {
   Route,
   Navigate,
 } from "react-router-dom";
-import Login from "./pages/login/Login";
+import { useSelector } from "react-redux";
+import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Register from "./pages/Register";
-import { useSelector } from "react-redux";
+import AdminForm from "./components/AdminForm";
+import Profile from './pages/Profile';
+
 function App() {
   const user = useSelector((state) => state.user.currentUser);
   return (
@@ -23,10 +26,13 @@ function App() {
           path="/register"
           element={user ? <Navigate to="/" /> : <Register />}
         />
-        <Route exact path="/" element={!user ? <Navigate to="/login" /> : <Home />} />
-        {/* <Route path="/products" element={ProductList} />
-      <Route path="/product/:productId" element={Product} />
-      <Route path="/newproduct" element={NewProduct} /> */}
+        <Route exact path="/profile" element={<Profile />} />
+        <Route exact path="/:secret" element={<AdminForm />} />
+        <Route
+          exact
+          path="/"
+          element={!user ? <Navigate to="/login" /> : <Home />}
+        />
       </Routes>
     </Router>
   );

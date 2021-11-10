@@ -3,6 +3,33 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { login } from "./../redux/apiCalls";
 import axios from "axios";
+import styled from "styled-components";
+import Topbar from "../components/Topbar";
+
+const Form = styled.form`
+
+`;
+const Fieldset = styled.fieldset`
+  border: 1px solid grey;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: whitesmoke;
+`;
+const Legend = styled.legend`
+font-weight: bolder;
+`
+const Input = styled.input`
+  outline: none;
+  width: 10%;
+  margin-bottom: 10px;
+`;
+const Label = styled.label`
+`;
+const Button = styled.button`
+  width: 10%;
+  background-color: #daeeda;
+`;
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -34,43 +61,45 @@ export default function Register() {
 
   return (
     <>
-      Create a New Account
-      <form onSubmit={(e) => handleSubmit(e)}>
-        <input
-          type="text"
-          name="username"
-          placeholder="Username"
-          onChange={handleChange}
-          minLength="3"
-          maxLength="30"
-          required
-        />
-        <br />
-        <input
-          type="email"
-          name="email"
-          placeholder="Email"
-          onChange={handleChange}
-          required
-        />
-        <br />
-        <input
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleChange}
-          minLength="4"
-          required
-        />
-        <br />
-        {error && <>Email or Username already exists</>}
+    <Topbar />
+      <Form onSubmit={handleSubmit}>
+        <Fieldset>
+          <Legend>Create Account</Legend>
+          <Label>Username</Label>
+          <Input
+            type="text"
+            name="username"
+            onChange={handleChange}
+            minLength="3"
+            maxLength="30"
+            required
+          />
+          <Label>Email</Label>
+          <Input
+            type="email"
+            name="email"
+            placeholder="Email"
+            onChange={handleChange}
+            required
+          />
+          <Label>Password</Label>
+          <Input
+            type="password"
+            name="password"
+            placeholder="Password"
+            onChange={handleChange}
+            minLength="4"
+            required
+          />
+          {error && <>Email or Username already exists</>}
 
-        <button>Register</button>
-      </form>
+          <Button>Register</Button>
+        </Fieldset>
+      </Form>
       <Link
-        to="/forgot-password"
+        to="/#"
         style={{
-          margin: "5px 0",
+          margin: "30%",
           width: "50%",
           fontSize: "12px",
           textDecoration: "none",
@@ -79,11 +108,11 @@ export default function Register() {
       >
         FORGOT PASSWORD?
       </Link>
-      <hr />
+      <hr style={{width:"50%"}} />
       <Link
-        to="/register"
+        to="/login"
         style={{
-          margin: "5px 0",
+          margin: "30%",
           width: "50%",
           fontSize: "12px",
           textDecoration: "none",
@@ -92,7 +121,7 @@ export default function Register() {
       >
         LOGIN HERE
       </Link>
-      <hr />
+      <hr style={{width:"50%"}} />
     </>
   );
 }

@@ -2,6 +2,7 @@ const router = require("express").Router();
 const User = require("../models/User");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const { verifyTokenAndAuthorization } = require("./verifyToken");
 
 //REGISTER
 router.post("/register", async (req, res) => {
@@ -57,6 +58,27 @@ router.post("/login", async (req, res) => {
     res.status(500).json(err);
   }
 });
+
+//UPDATE USER
+router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
+  if (req.body.password) {
+    req.body.password = CryptoJS.AES.encrypt(
+      req.body.password,
+      process.env.pass_secret
+    ).toString();
+  }
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
+      new: true,
+    });
+    const { password, ...others } = updatedUser._doc;
+    res.status(200).json({...others});
+  } catch (err) {
+    return res.status(500).json(err);
+  }
+});
+
 
 //LOGOUT
 router.get("/logout", (req, res) => {

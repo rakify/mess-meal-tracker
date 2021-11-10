@@ -6,6 +6,7 @@ const cors = require("cors");
 const authRoute = require("./routes/auth");
 const entriesRoute = require("./routes/entries");
 
+
 //connect to db
 mongoose
   .connect(process.env.DB_CONNECTION, {
@@ -44,7 +45,6 @@ app.use(express.json());
 //routes
 app.use("/api/auth", authRoute);
 app.use("/api/entries", entriesRoute);
-
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {

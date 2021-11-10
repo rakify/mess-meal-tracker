@@ -11,7 +11,7 @@ const MAINTABLE = styled.table`
 `;
 const TABLE = styled.table`
   border: 1px solid #cad4e0;
-  margin: .5px;
+  margin: 0.5px;
   width: 100%;
   height: 30px;
   &:nth-child(odd) {
@@ -44,49 +44,35 @@ const TD = styled.td`
 
 const FinalReport = () => {
   const entries = useSelector((state) => state.data.entries);
+  const user = useSelector((state) => state.user.currentUser);
   let allMeals = 0,
-    allCosts = 0,
-    rakibMeals = 0,
-    rakibSpent = 0,
-    sakibMeals = 0,
-    sakibSpent = 0,
-    rakibulMeals = 0,
-    rakibulSpent = 0,
-    hridoyMeals = 0,
-    hridoySpent = 0,
-    limonMeals = 0,
-    limonSpent = 0,
-    siamMeals = 0,
-    siamSpent = 0,
-    shawonMeals = 0,
-    shawonSpent = 0;
-  for (const i in entries) {
-    rakibMeals += entries[i].meals.Rakib;
-    sakibMeals += entries[i].meals.Sakib;
-    rakibulMeals += entries[i].meals.Rakibul;
-    hridoyMeals += entries[i].meals.Hridoy;
-    limonMeals += entries[i].meals.Limon;
-    siamMeals += entries[i].meals.Siam;
-    shawonMeals += entries[i].meals.Shawon;
-    entries[i].costBy === "Rakib"
-      ? (rakibSpent += entries[i].cost)
-      : entries[i].costBy === "Sakib"
-      ? (sakibSpent += entries[i].cost)
-      : entries[i].costBy === "Rakibul"
-      ? (rakibulSpent += entries[i].cost)
-      : entries[i].costBy === "Hridoy"
-      ? (hridoySpent += entries[i].cost)
-      : entries[i].costBy === "Limon"
-      ? (limonSpent += entries[i].cost)
-      : entries[i].costBy === "Siam"
-      ? (siamSpent += entries[i].cost)
-      : entries[i].costBy === "Shawon"
-      ? (shawonSpent += entries[i].cost)
-      : (shawonSpent += 0);
-    allMeals += entries[i].totalMeals;
-    allCosts += entries[i].cost;
+    allSpent = 0,
+    allReserved = 0;
+
+  // set initialMeals per member to 0
+  let initialMeals = {};
+  for (let i = 0; i < user.members.length; i++) {
+    initialMeals[user.members[i]] = 0;
   }
-  let mealRate = allCosts / allMeals;
+
+  // set initialReserved per member to 0
+  let initialReserved = {};
+  for (let i = 0; i < user.members.length; i++) {
+    initialReserved[user.members[i]] = 0;
+  }
+  console.log(initialMeals["Rakib"]);
+
+  for (const i in entries) {
+    const by = entries[i].by;
+    initialReserved[by] += entries[i].reserved;
+    allMeals += entries[i].totalMeals;
+    allSpent += entries[i].spent;
+    allReserved += entries[i].reserved;
+    for (let j = 0; j < user.members.length; j++) {
+      initialMeals[user.members[j]] += entries[i].meals[user.members[j]];
+    }
+  }
+  let mealRate = allSpent / allMeals;
 
   return (
     <Container>
@@ -95,138 +81,38 @@ const FinalReport = () => {
         <TBODY>
           <TR>
             <TH>Total Meals</TH>
-            <TH>Total Costs</TH>
+            <TH>Total Spent</TH>
+            <TH>Total Reserve</TH>
             <TH>Meal Rate</TH>
           </TR>
         </TBODY>
         <TBODY>
           <TR>
             <TD>{allMeals}</TD>
-            <TD>{allCosts}</TD>
-            <TD>{mealRate}</TD>
+            <TD>{allSpent}</TD>
+            <TD>{allReserved}</TD>
+            <TD>{mealRate.toFixed(2)}</TD>
           </TR>
         </TBODY>
       </MAINTABLE>
       <br />
-      <TABLE>
-        <CAPTION>Rakib</CAPTION>
+      {user.members.map(i=> (<TABLE>
+        <CAPTION>{i}</CAPTION>
         <TBODY>
           <TR>
             <TH>Meals</TH>
-            <TH>Spent</TH>
+            <TH>Put</TH>
             <TH>Due</TH>
           </TR>
         </TBODY>
         <TBODY>
           <TR>
-            <TD>{rakibMeals}</TD>
-            <TD>{rakibSpent}</TD>
-            <TD>{(rakibSpent - rakibMeals * mealRate).toFixed(2)}</TD>
+            <TD>{initialMeals[i]}</TD>
+            <TD>{initialReserved[i]}</TD>
+            <TD>{(initialReserved[i] - initialMeals[i] * mealRate).toFixed(2)}</TD>
           </TR>
         </TBODY>
-      </TABLE>
-      <TABLE>
-        <CAPTION>Sakib</CAPTION>
-        <TBODY>
-          <TR>
-            <TH>Meals</TH>
-            <TH>Spent</TH>
-            <TH>Due</TH>
-          </TR>
-        </TBODY>
-        <TBODY>
-          <TR>
-            <TD>{sakibMeals}</TD>
-            <TD>{sakibSpent}</TD>
-            <TD>{(sakibSpent - sakibMeals * mealRate).toFixed(2)}</TD>
-          </TR>
-        </TBODY>
-      </TABLE>
-      <TABLE>
-        <CAPTION>Rakibul</CAPTION>
-        <TBODY>
-          <TR>
-            <TH>Meals</TH>
-            <TH>Spent</TH>
-            <TH>Due</TH>
-          </TR>
-        </TBODY>
-        <TBODY>
-          <TR>
-            <TD>{rakibulMeals}</TD>
-            <TD>{rakibulSpent}</TD>
-            <TD>{(rakibulSpent - rakibulMeals * mealRate).toFixed(2)}</TD>
-          </TR>
-        </TBODY>
-      </TABLE>
-      <TABLE>
-        <CAPTION>Hridoy</CAPTION>
-        <TBODY>
-          <TR>
-            <TH>Meals</TH>
-            <TH>Spent</TH>
-            <TH>Due</TH>
-          </TR>
-        </TBODY>
-        <TBODY>
-          <TR>
-            <TD>{hridoyMeals}</TD>
-            <TD>{hridoySpent}</TD>
-            <TD>{(hridoySpent - hridoyMeals * mealRate).toFixed(2)}</TD>
-          </TR>
-        </TBODY>
-      </TABLE>
-      <TABLE>
-        <CAPTION>Limon</CAPTION>
-        <TBODY>
-          <TR>
-            <TH>Meals</TH>
-            <TH>Spent</TH>
-            <TH>Due</TH>
-          </TR>
-        </TBODY>
-        <TBODY>
-          <TR>
-            <TD>{limonMeals}</TD>
-            <TD>{limonSpent}</TD>
-            <TD>{(limonSpent - limonMeals * mealRate).toFixed(2)}</TD>
-          </TR>
-        </TBODY>
-      </TABLE>
-      <TABLE>
-        <CAPTION>Siam</CAPTION>
-        <TBODY>
-          <TR>
-            <TH>Meals</TH>
-            <TH>Spent</TH>
-            <TH>Due</TH>
-          </TR>
-        </TBODY>
-        <TBODY>
-          <TR>
-            <TD>{siamMeals}</TD>
-            <TD>{siamSpent}</TD>
-            <TD>{(siamSpent - siamMeals * mealRate).toFixed(2)}</TD>
-          </TR>
-        </TBODY>
-      </TABLE>
-      <TABLE>
-        <CAPTION>Shawon</CAPTION>
-        <TBODY>
-          <TR>
-            <TH>Meals</TH>
-            <TH>Spent</TH>
-            <TH>Due</TH>
-          </TR>
-        </TBODY>
-        <TBODY>
-          <TR>
-            <TD>{shawonMeals}</TD>
-            <TD>{shawonSpent}</TD>
-            <TD>{(shawonSpent - shawonMeals * mealRate).toFixed(2)}</TD>
-          </TR>
-        </TBODY>
-      </TABLE>
+      </TABLE>))}
     </Container>
   );
 };

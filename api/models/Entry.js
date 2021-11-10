@@ -5,12 +5,13 @@ const EntrySchema = new mongoose.Schema(
     user: String,
     date: {
       type: Number,
-      unique: false
+      unique: false,
     },
-    cost: Number,
-    costBy: String,
+    spent: Number,
+    reserved: Number,
+    by: String,
     meals: Object,
-    totalMeals: Number
+    totalMeals: Number,
   },
   { timestamps: true }
 );

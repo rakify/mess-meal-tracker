@@ -4,23 +4,25 @@ const UserSchema = new mongoose.Schema(
   {
     username: {
       type: String,
-      unique: [true, "Username already exists"],
+      unique: true,
       trim: true,
-      minlength: [3, "Username must be more than 3 characters"],
-      maxlength: [30, "Username must be less than 30 characters"],
-      required: [true, "Username is required"],
+      minlength: 3,
+      maxlength: 30,
+      required: true,
     },
     email: {
       type: String,
       trim: true,
-      required: [true, "Email is required"],
-      unique: [true, "Email already exists"],
+      required: true,
+      unique: true,
     },
     password: {
       type: String,
-      minlength: [4, "Password must be more than 4 characters"],
-      required: [true, "Password is required"],
+      minlength: 4,
+      required: true,
     },
+    members: Array,
+    secret_key: String
   },
   { timestamps: true }
 );
