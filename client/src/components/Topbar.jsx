@@ -8,16 +8,18 @@ const Top = styled.div`
   justify-content: center;
   align-items: center;
   font-size: 30px;
-  padding: 10px;
+  padding-bottom: 10px;
   background-color: black;
   color: white;
   width: 100%;
   position: fixed;
   top: 0;
+  left: 0;
+  right: 0;
   ${mobile({ padding: 0 })}
 `;
 const Nav = styled.div`
-  margin-top: 60px;
+  margin-top: 50px;
   display: flex;
 `;
 const NavLeft = styled.span`

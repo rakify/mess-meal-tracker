@@ -21,14 +21,14 @@ font-weight: bolder;
 `
 const Input = styled.input`
   outline: none;
-  width: 10%;
+  width: 90px;
   margin-bottom: 10px;
 `;
-const Label = styled.label`
-`;
 const Button = styled.button`
-  width: 10%;
+  width: 100px;
   background-color: #daeeda;
+`;
+const Label = styled.label`
 `;
 
 export default function Register() {

@@ -101,7 +101,7 @@ const FinalReport = () => {
         <TBODY>
           <TR>
             <TH>Meals</TH>
-            <TH>Put</TH>
+            <TH>Reserved</TH>
             <TH>Due</TH>
           </TR>
         </TBODY>
