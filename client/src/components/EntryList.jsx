@@ -4,8 +4,6 @@ import { useSelector } from "react-redux";
 const Container = styled.div`
   display: flex;
   overflow-x: auto;
-  overflow-y: auto;
-  height: 500px;
 `;
 const TABLE = styled.table`
   border: 1px solid green;
