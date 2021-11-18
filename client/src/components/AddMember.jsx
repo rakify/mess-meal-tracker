@@ -56,9 +56,9 @@ export default function AddMember() {
             required
           />
           {Inputs.map((i) => (
-            <>
-              <Label key={i}>Member {i + 1}</Label>
-              <Input key={i+1}
+            <div key={i}>
+              <Label>Member {i + 1}</Label>
+              <Input
                 type="text"
                 value={inputs[i]}
                 onChange={(e)=>inputs[i]=e.target.value}
@@ -66,7 +66,7 @@ export default function AddMember() {
                 maxLength="30"
                 required
               />
-            </>
+            </div>
           ))}
           <Button>Add</Button>
         </Fieldset>

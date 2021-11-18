@@ -2,6 +2,7 @@ import { mobile } from "../responsive";
 import { logout } from "../redux/apiCalls";
 import styled from "styled-components";
 import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 
 const Top = styled.div`
   display: flex;
@@ -58,7 +59,9 @@ const Topbar = () => {
 
   return (
     <>
-      <Top>Mess Meal Tracker</Top>
+      <Top><Link to="/" style={{textDecoration:"none", color:"white"}}>
+        Mess Meal Tracker
+      </Link></Top>
       <Nav>
         {user && <NavLeft>Today is {month + " " + date + ", " + year}</NavLeft>}
         {user && (
