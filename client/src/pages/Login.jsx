@@ -32,21 +32,30 @@ const Error = styled.div`
 const Button = styled.button`
   width: 100px;
   padding: 5px;
+  border: 1px solid black;
   background-color: #daeeda;
+`;
+const ButtonOnLoad = styled.button`
+  background-color: #04aa6d;
+  width: 100px;
+  border: none;
+  color: white;
+  padding: 5px;
 `;
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
-  
+
   const handleSubmit = (e) => {
     e.preventDefault();
-    username.length >= 3 &&
-      password.length >= 4 &&
-      login(dispatch, { username, password });
+    login(dispatch, { username, password }).then((res) =>
+      setError(res.request.responseText)
+    );
   };
 
   return (
@@ -55,28 +64,47 @@ const Login = () => {
       <Form onSubmit={handleSubmit}>
         <Fieldset>
           <Legend>Login To Your Account</Legend>
+
+          {/* Input Fields */}
           <Input
             type="text"
             placeholder="Username *"
             onChange={(e) => setUsername(e.target.value)}
+            minLength="3"
             required
           />
           <Input
             type="password"
             placeholder="Password *"
+            minLength="4"
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <Button disabled={user.isFetching}>Login</Button>
 
-          {user.error && (
-            <Error style={{ color: "#D8000C",
-              backgroundColor: "#FFBABA",
-              backgroundImage: `url(${"https://i.imgur.com/GnyDvKN.png"})` }}>
-              Username or Password is Incorrect!
+          {/* If Button is Loading */}
+          {user.isFetching && (
+            <ButtonOnLoad disabled>
+              <i className="fa fa-spinner fa-spin"></i> Logging In
+            </ButtonOnLoad>
+          )}
+
+          {/* Normal Button */}
+          {!user.isFetching && <Button>Login</Button>}
+
+          {/* If Error Fetched By Server */}
+          {error !== "" && (
+            <Error
+              style={{
+                color: "#D8000C",
+                backgroundColor: "#FFBABA",
+                backgroundImage: `url(${"https://i.imgur.com/GnyDvKN.png"})`,
+              }}
+            >
+              {error.slice(1, -1)}
             </Error>
           )}
 
+          {/* Validation from Client Side */}
           {(username.length <= 3 || password.length <= 4) && (
             <Error
               style={{
@@ -86,14 +114,15 @@ const Login = () => {
               }}
             >
               {username.length <= 3 &&
-                "* Username must be atleast 3 characters long."}
-              <br />
+                <div>* Username must be atleast 3 characters long.</div>}
               {password.length <= 4 &&
-                "* Password must be atleast 4 characters long."}
+                <div>* Password must be atleast 4 characters long.</div>}
             </Error>
           )}
         </Fieldset>
       </Form>
+
+      {/* Useful Links */}
       <Link
         to="/#"
         style={{

@@ -47,6 +47,7 @@ const Admin = () => {
       {user.members.length > 0 && (
         <>
           <Menu>
+            {user && <AdminForm />}
             <FinalReport />
           </Menu>
           <br />

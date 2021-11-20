@@ -83,6 +83,7 @@ const FinalReport = () => {
             <TH>Total Meals</TH>
             <TH>Total Spent</TH>
             <TH>Total Reserve</TH>
+            <TH>Remaining</TH>
             <TH>Meal Rate</TH>
           </TR>
         </TBODY>
@@ -91,6 +92,7 @@ const FinalReport = () => {
             <TD>{allMeals}</TD>
             <TD>{allSpent}</TD>
             <TD>{allReserved}</TD>
+            <TD>{allReserved-allSpent}</TD>
             <TD>{mealRate.toFixed(2)}</TD>
           </TR>
         </TBODY>

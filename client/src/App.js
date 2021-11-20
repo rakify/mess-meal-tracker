@@ -7,8 +7,8 @@ import {
 import { useSelector } from "react-redux";
 import Login from "./pages/Login";
 import Home from "./pages/Home";
+import Admin from "./pages/Admin";
 import Register from "./pages/Register";
-import AdminForm from "./components/AdminForm";
 import Profile from './pages/Profile';
 
 function App() {
@@ -16,6 +16,11 @@ function App() {
   return (
     <Router>
       <Routes>
+      <Route
+          exact
+          path="/:username"
+          element={<Home />}
+        />
         <Route
           exact
           path="/login"
@@ -26,13 +31,9 @@ function App() {
           path="/register"
           element={user ? <Navigate to="/" /> : <Register />}
         />
-        <Route exact path="/profile" element={<Profile />} />
-        <Route exact path="/:secret" element={<AdminForm />} />
-        <Route
-          exact
-          path="/"
-          element={!user ? <Navigate to="/login" /> : <Home />}
-        />
+        <Route exact path="/profile" element={user ? <Navigate to="/" /> : <Profile />} />
+        <Route exact path="/" element={user? <Home />:<Login />} />
+        <Route exact path="/admin" element={user? <Admin />:<Login />} />
       </Routes>
     </Router>
   );

@@ -2,7 +2,9 @@ const router = require("express").Router();
 const User = require("../models/User");
 const CryptoJS = require("crypto-js");
 const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
 const { verifyTokenAndAuthorization } = require("./verifyToken");
+const { response } = require("express");
 
 //REGISTER
 router.post("/register", async (req, res) => {
@@ -17,7 +19,6 @@ router.post("/register", async (req, res) => {
     const user = await newUser.save();
     res.status(201).json(user);
   } catch (err) {
-    console.log(err);
     res.status(500).json(err);
   }
 });
@@ -44,7 +45,7 @@ router.post("/login", async (req, res) => {
       { expiresIn: "30d" }
     );
 
-    const { password, ...others } = user._doc;
+    const { password, admin_key, ...others } = user._doc;
 
     res
       .status(200)
@@ -55,30 +56,77 @@ router.post("/login", async (req, res) => {
       })
       .json({ ...others });
   } catch (err) {
-    res.status(500).json(err);
+    res
+      .status(500)
+      .json("Server failed to connect. Please check your internet connection.");
   }
 });
 
 //UPDATE USER
 router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
-  if (req.body.password) {
-    req.body.password = CryptoJS.AES.encrypt(
-      req.body.password,
-      process.env.pass_secret
-    ).toString();
-  }
+  console.log(req.body);
+  if (req.body.key === true) {
+    const randomKey = Math.floor(1000 + Math.random() * 9000);
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        { admin_key: randomKey },
+        {
+          new: true,
+        }
+      );
 
-  try {
-    const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, {
-      new: true,
-    });
-    const { password, ...others } = updatedUser._doc;
-    res.status(200).json({...others});
-  } catch (err) {
-    return res.status(500).json(err);
+      // Email process begins here
+      let transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.nm_user,
+          pass: process.env.nm_pass,
+        },
+      });
+      let mailOption = {
+        from: process.env.nm_user,
+        to: updatedUser.email,
+        subject: `Mess Meal Tracker - New Key`,
+        text: `Dear ${updatedUser.username},\nIt seems that you requested to reset your admin key.\nHere is the key.\nKey: ${randomKey}\nThank you for using mess meal tracker.\nIf you have any query regarding the site, please reply to this mail.`,
+      };
+
+      transporter.sendMail(mailOption, function (err, data) {
+        if (err) {
+          return res.json({
+            msg: "Can not send email",
+            err,
+          });
+        } else {
+          return res.status(200).json("An email has been sent to the associated email id. Please make sure to check spam folders also.");
+        }
+      });
+      console.log(updatedUser);
+    } catch (err) {
+      return res.status(500).json(err);
+    }
+  } else {
+    if (req.body.password) {
+      req.body.password = CryptoJS.AES.encrypt(
+        req.body.password,
+        process.env.pass_secret
+      ).toString();
+    }
+    try {
+      const updatedUser = await User.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        {
+          new: true,
+        }
+      );
+      const { password, admin_key, ...others } = updatedUser._doc;
+      res.status(200).json({ ...others });
+    } catch (err) {
+      return res.status(500).json(err);
+    }
   }
 });
-
 
 //LOGOUT
 router.get("/logout", (req, res) => {

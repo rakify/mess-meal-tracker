@@ -1,9 +1,14 @@
 const router = require("express").Router();
 const Entry = require("../models/Entry");
+const User = require("../models/User");
 const { verifyToken } = require("./verifyToken");
 
 // CREATE A Entry
 router.post("/", verifyToken, async (req, res) => {
+  const user = await User.findById(req.user.id);
+  if(user.admin_key!=req.body.admin_key){
+    return res.status(401).json("Key Doesn't Match. Please Reset the Key or Try Again.");
+  }
   const newEntry = new Entry(req.body);
   try {
     savedEntry = await newEntry.save();

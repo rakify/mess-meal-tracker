@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { login } from "./../redux/apiCalls";
+import { login, register } from "./../redux/apiCalls";
 import axios from "axios";
 import styled from "styled-components";
 import Topbar from "../components/Topbar";
@@ -36,6 +36,13 @@ const Button = styled.button`
   padding: 5px;
   background-color: #daeeda;
 `;
+const ButtonOnLoad = styled.button`
+  background-color: #04aa6d;
+  width: 100px;
+  border: none;
+  color: white;
+  padding: 5px;
+`;
 
 export default function Register() {
   const dispatch = useDispatch();
@@ -44,6 +51,8 @@ export default function Register() {
     password: "",
     email: "",
   });
+  const [error, setError] = useState("");
+
   const user = useSelector((state) => state.user);
 
   const handleChange = (e) => {
@@ -52,20 +61,13 @@ export default function Register() {
     });
   };
 
-  const addUser = async (user) => {
-    try {
-      await axios.post(`/auth/register`, user);
-      login(dispatch, { username: user.username, password: user.password });
-    } catch (err) {
-    }
-  };
-
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = {
       ...inputs,
     };
-    addUser(user);
+    register(user).then((res) => setError(res.request));
+    login(dispatch, { username: user.username, password: user.password });
   };
 
   return (
@@ -75,8 +77,7 @@ export default function Register() {
         <Fieldset>
           <Legend>Create Account</Legend>
 
-{/* INPUT FIELDS */}
-
+          {/* INPUT FIELDS */}
           <Input
             type="text"
             placeholder="Username *"
@@ -103,16 +104,20 @@ export default function Register() {
           />
           <Button disabled={user.isFetching}>Register</Button>
 
-{/* ERROR VALIIDATION */}
-
-          {user.error && (
-            <Error style={{ color: "#D8000C",
-              backgroundColor: "#FFBABA",
-              backgroundImage: `url(${"https://i.imgur.com/GnyDvKN.png"})` }}>
+          {/* Fetching Error from Server Side */}
+          {error!=="" && (
+            <Error
+              style={{
+                color: "#D8000C",
+                backgroundColor: "#FFBABA",
+                backgroundImage: `url(${"https://i.imgur.com/GnyDvKN.png"})`,
+              }}
+            >
               Username or Email Already Exists!
             </Error>
           )}
 
+          {/* VALIIDATION from Client Side */}
           {(inputs.username.length <= 3 ||
             inputs.password.length <= 4 ||
             !inputs.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) && (
@@ -131,13 +136,10 @@ export default function Register() {
                 "* Email address must be valid."}
             </Error>
           )}
-
-
         </Fieldset>
       </Form>
 
-{/* USEFULL LINKS */}
-      
+      {/* USEFULL LINKS */}
       <Link
         to="/#"
         style={{

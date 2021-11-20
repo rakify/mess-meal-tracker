@@ -41,13 +41,33 @@ export const updateUser = async (id, user, dispatch) => {
   }
 };
 
+export const updateKey = async (id) => {
+  try {
+    const res = await axios.put(`/auth/${id}`, {key: true});
+    return res;
+  } catch (err) {
+  return err
+  }
+};
+
 export const login = async (dispatch, user) => {
   dispatch(loginStart());
   try {
     const res = await axios.post("/auth/login", user);
     dispatch(loginSuccess(res.data));
+    return res;
   } catch (err) {
     dispatch(loginFailure());
+    return err;
+  }
+};
+
+export const register = async (user) => {
+  try {
+    const res = await axios.post("/auth/register", user);
+    return res;
+  } catch (err) {
+    return err;
   }
 };
 
@@ -57,6 +77,7 @@ export const getEntry = async (username, dispatch) => {
     const res = await axios.get(`/entries/${username}`);
     dispatch(getEntriesSuccess(res.data));
   } catch (err) {
+    console.log(err)
     dispatch(getEntriesFailure());
   }
 };
@@ -64,7 +85,7 @@ export const getEntry = async (username, dispatch) => {
 export const deleteEntry = async (id, dispatch) => {
   dispatch(deleteEntriesStart());
   try {
-    await axios.delete(`/Entries/${id}`);
+    await axios.delete(`/entries/${id}`);
     dispatch(deleteEntriesSuccess({ id: id }));
   } catch (err) {
     dispatch(deleteEntriesFailure());
@@ -87,7 +108,9 @@ export const addEntry = async (entries, dispatch) => {
   try {
     const res = await axios.post(`/entries`, entries);
     dispatch(addEntriesSuccess(res.data));
+    return res;
   } catch (err) {
     dispatch(addEntriesFailure());
+    return err;
   }
 };
