@@ -17,8 +17,9 @@ const CAPTION = styled.caption`
 
 const TBODY = styled.tbody`
   &:nth-child(even) {
-    background-color: #dddddd;
+    background-color: #d7e5f1;
   }
+  background-color: #e5ecf0;
 `;
 const TR = styled.tr`
   display: flex;
@@ -28,11 +29,14 @@ const TH = styled.th`
   text-align: left;
   border-bottom: 1px solid black;
   padding: 10px;
+  background-color: #8aa18a;
+  border-right: 1px solid white;
 `;
 const TD = styled.td`
   flex: 1;
   text-align: left;
   padding: 10px;
+  border-right: 1px solid white;
 `;
 
 export default function EntryList(props) {
@@ -63,8 +67,9 @@ export default function EntryList(props) {
                 <TD>{item?.spent}</TD>
                 <TD>{item?.reserved}</TD>
                 <TD>{item?.by}</TD>
-                {user.members.map(i=>
-                <TD>{item.meals[`${i}`]}</TD>)}
+                {user.members.map((i) => (
+                  <TD>{item.meals[`${i}`]}</TD>
+                ))}
                 <TD>{item?.totalMeals}</TD>
               </TR>
             </TBODY>

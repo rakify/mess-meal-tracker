@@ -16,17 +16,29 @@ const Top = styled.div`
   display: flex;
 `;
 const InputTitle = styled.div`
-  border: 1px solid black;
+  margin-right: 3px;
   display: inline-block;
-  margin-right: 2px;
-  padding: 5px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 `;
 const Input = styled.input`
-  padding: 5px;
+  width: 200px;
+  height: 25px;
+  padding: 9px;
+  margin: 3px 3px 3px 3px;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
 `;
 const Select = styled.select`
-  width: 100px;
-  padding: 5px;
+  width: 60px;
+  height: 25px;
+  margin: 3px 3px 3px 0;
+  -moz-box-sizing: border-box;
+  -webkit-box-sizing: border-box;
+  box-sizing: border-box;
+  cursor: pointer;
 `;
 const Button = styled.button`
   background-color: #04aa6d;
@@ -34,6 +46,7 @@ const Button = styled.button`
   border: none;
   color: white;
   padding: 5px;
+  cursor: pointer;
 `;
 const ButtonOnLoad = styled.button`
   background-color: #04aa6d;
@@ -107,6 +120,12 @@ const Error = styled.div`
   cursor: pointer;
 `;
 
+const ForgotClick = styled.button`
+  outline: none;
+  border: none;
+  cursor: pointer;
+`;
+
 const AdminForm = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
@@ -125,8 +144,9 @@ const AdminForm = () => {
   });
   const [prompt, setPrompt] = useState(false);
   const [keyResponse, setKeyResponse] = useState("");
-  const [error, setError] = useState({});
-  const [confirm, setConfirm] = useState("Confirm");
+  const [error, setError] = useState({}); // after submitting show result
+  const [confirm, setConfirm] = useState("Confirm"); // after confirming key show loading animation
+  const [loading, setLoading] = useState(false); // after submitting show loading animation
   //set initialMeals per member as 0
   let initialMeals = {};
   for (let i = 0; i < user.members.length; i++) {
@@ -149,12 +169,15 @@ const AdminForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
     let totalMeals = 0;
     for (const i in meals) {
       totalMeals += meals[i];
     }
-    addEntry({ ...inputs, meals, totalMeals }, dispatch).then((res) =>
-      setError(res.request)
+    addEntry({ ...inputs, meals, totalMeals }, dispatch).then((res) =>{
+      setError(res.request);
+      setLoading(false);
+    }
     );
   };
 
@@ -165,6 +188,8 @@ const AdminForm = () => {
 
   return (
     <>
+    <br />
+      {/* Reset Key Modal */}
       {prompt && (
         <Modal>
           <ModalContent>
@@ -189,6 +214,7 @@ const AdminForm = () => {
         </Modal>
       )}
 
+      {/* Admin Form */}
       <Form onSubmit={handleSubmit}>
         {/* If Error Fetched By Server */}
         {error.status === 200 && (
@@ -199,10 +225,9 @@ const AdminForm = () => {
               backgroundImage: `url("https://i.imgur.com/Q9BGTuy.png")`,
             }}
           >
-           Entry Added Successfully.
+            Entry Added Successfully.
           </Error>
         )}
-
         {error.status === 401 && (
           <Error
             style={{
@@ -214,13 +239,14 @@ const AdminForm = () => {
             {error.responseText.slice(1, -1)}
           </Error>
         )}
-
+        {/* Start Form Inputs */}
         <Title>Submit Todays Entry</Title>
+        <br />
         <Top>
           <InputTitle>
             Money Spent:
             <Input
-              style={{ width: "40px", outline: "none", border: "none" }}
+              style={{ width: "60px", margin: "3px" }}
               type="number"
               name="spent"
               value={inputs.spent}
@@ -230,27 +256,35 @@ const AdminForm = () => {
           <InputTitle>
             Reserved Money:
             <Input
-              style={{ width: "40px", outline: "none", border: "none" }}
+              style={{ width: "60px", margin: "3px" }}
               type="number"
               name="reserved"
               value={inputs.reserved}
               onChange={handleChange}
             />
           </InputTitle>
-          <Select name="by" value={inputs.by} onChange={handleChange} required>
-            <option value="" disabled>
-              By
-            </option>
-            {user.members.map((i) => (
-              <option value={i}>{i}</option>
-            ))}
-          </Select>
-        </Top>
 
+          <InputTitle>
+            By:
+            <Select
+              name="by"
+              value={inputs.by}
+              onChange={handleChange}
+              required
+            >
+              <option value="" disabled>
+                Select
+              </option>
+              {user.members.map((i) => (
+                <option value={i}>{i}</option>
+              ))}
+            </Select>
+          </InputTitle>
+        </Top>
         <InputTitle>
           Key:
           <Input
-            style={{ width: "100px", outline: "none", border: "none" }}
+            style={{ width: "100px", margin: "3px" }}
             type="number"
             placeholder="0000"
             name="admin_key"
@@ -259,34 +293,37 @@ const AdminForm = () => {
             required
           />
         </InputTitle>
-        <span onClick={() => setPrompt(true)}>Forgot?</span>
-
-        <br />
-
+        Can't Remember (
+        <ForgotClick onClick={() => setPrompt(true)}>?</ForgotClick>)
+      
+        <div style={{ textDecoration: "underline"}}>Meals</div>
         {user.members.map((i) => (
           <>
-            <Input type="text" name="name" value={i} readOnly></Input>
-            <Input
-              style={{ width: "20%" }}
-              type="number"
-              name={i}
-              value={meals[i]}
-              onChange={handleMeals}
-              required
-            ></Input>
+            <InputTitle>
+              {" "}
+              {i}:
+              <Input
+                style={{ width: "60px" }}
+                type="number"
+                name={i}
+                value={meals[i]}
+                onChange={handleMeals}
+                required
+              ></Input>
+            </InputTitle>
             <br />
           </>
         ))}
+
+<br />
         {/* If Button is Loading */}
-        {data.isFetching && (
-            <ButtonOnLoad disabled>
-              <i className="fa fa-spinner fa-spin"></i> Submitting
-            </ButtonOnLoad>
-          )}
-
-          {/* Normal Button */}
-          {!data.isFetching && <Button>Submit</Button>}
-
+        {loading && (
+          <ButtonOnLoad disabled>
+            <i className="fa fa-spinner fa-spin"></i> Submitting
+          </ButtonOnLoad>
+        )}
+        {/* Normal Button */}
+        {!loading && <Button>Submit</Button>}
       </Form>
     </>
   );

@@ -66,7 +66,7 @@ const Topbar = () => {
         {user && <NavLeft>Today is {month + " " + date + ", " + year}</NavLeft>}
         {user && (
           <NavRight>
-            <Link to="/admin" style={{textDecoration:"none", color: "black"}}>{user.username}</Link>
+            <Link to="/admin" style={{textDecoration:"none", color: "black", cursor: "pointer"}}>{user.username}</Link>
             <Logout onClick={() => logout(dispatch)}>(Logout)</Logout>
           </NavRight>
         )}

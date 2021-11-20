@@ -5,19 +5,19 @@ const Container = styled.div`
   flex: 1;
 `;
 const MAINTABLE = styled.table`
+  margin-bottom: 1px;
   width: 100%;
-  height: 20px;
-  border: 1px solid gainsboro;
+  box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
+  -webkit-box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
+  -moz-box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
 `;
 const TABLE = styled.table`
-  border: 1px solid #cad4e0;
-  margin: 0.5px;
+  margin-bottom: 2px;
   width: 100%;
-  height: 30px;
-  &:nth-child(odd) {
-    background-color: #cad4e0;
-  }
-`;
+  box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
+  -webkit-box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
+  -moz-box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
+  `;
 const CAPTION = styled.caption`
   font-weight: bolder;
   display: inline;
