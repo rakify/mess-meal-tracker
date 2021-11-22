@@ -76,16 +76,19 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
         }
       );
 
-      // Email process begins here
+      //Email process begins here
       let transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: "smtp.sendgrid.net",
+        port: 465,
+        secure: true,
         auth: {
-          user: process.env.nm_user,
-          pass: process.env.nm_pass,
+          user: "apikey",
+          pass: process.env.SENDGRID_API_KEY,
         },
       });
+
       let mailOption = {
-        from: process.env.nm_user,
+        from: "irakibm@gmail.com",
         to: updatedUser.email,
         subject: `Mess Meal Tracker - New Key`,
         text: `Dear ${updatedUser.username},\nIt seems that you requested to reset your admin key.\nHere is the key.\nKey: ${randomKey}\nThank you for using mess meal tracker.\nIf you have any query regarding the site, please reply to this mail.`,

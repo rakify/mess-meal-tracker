@@ -6,8 +6,10 @@ const { verifyToken } = require("./verifyToken");
 // CREATE A Entry
 router.post("/", verifyToken, async (req, res) => {
   const user = await User.findById(req.user.id);
-  if(user.admin_key!=req.body.admin_key){
-    return res.status(401).json("Key Doesn't Match. Please Reset the Key or Try Again.");
+  if (user.admin_key != req.body.admin_key) {
+    return res
+      .status(401)
+      .json("Key doesn't match. Please reset the key or try again.");
   }
   const newEntry = new Entry(req.body);
   try {
@@ -35,8 +37,14 @@ router.put("/:id", verifyToken, async (req, res) => {
 //DELETE A Entry
 router.delete("/:id", verifyToken, async (req, res) => {
   try {
-    const Entry = await Entry.findByIdAndDelete(req.params.id);
-    res.status(200).json("the Entry has been deleted.");
+    const user = await User.findById(req.user.id);
+    if (user.admin_key != req.body.admin_key) {
+      return res
+        .status(401)
+        .json("Invalid key. You are unauthorized to delete an entry.");
+    }
+    await Entry.findByIdAndDelete(req.params.id);
+    res.status(200).json("The entry has been deleted.");
   } catch (err) {
     res.status(500).json(err);
   }
@@ -45,7 +53,7 @@ router.delete("/:id", verifyToken, async (req, res) => {
 //GET A Entry
 router.get("/find/:id", async (req, res) => {
   try {
-    const Entry = await Entry.findById(req.params.id);
+    Entry.findById(req.params.id);
     res.status(200).json(Entry);
   } catch (err) {
     res.status(500).json(err);

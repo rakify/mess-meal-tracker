@@ -1,5 +1,7 @@
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { deleteEntry } from "./../redux/apiCalls";
+import { useState } from "react";
 
 const Container = styled.div`
   display: flex;
@@ -37,14 +39,136 @@ const TD = styled.td`
   text-align: left;
   padding: 10px;
   border-right: 1px solid white;
+  cursor: pointer;
 `;
 
+const Modal = styled.div`
+  display: block; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0, 0, 0); /* Fallback color */
+  background-color: rgba(0, 0, 0, 0.4); /* Black w/ opacity */
+`;
+
+const ModalHeader = styled.div`
+  padding: 2px 16px;
+  background-color: #344234;
+  color: white;
+`;
+const ModalBody = styled.span`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: #883434;
+  font-weight: bold;
+  font-size: 20px;
+`;
+const ModalFooter = styled.div`
+  padding: 2px 16px;
+  background-color: #5cb85c;
+  color: white;
+`;
+const ModalContent = styled.div`
+  position: relative;
+  background-color: gray;
+  color: white;
+  margin: auto;
+  padding: 0;
+  border: 1px solid #888;
+  top: 40%;
+  width: 80%;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  animation-name: animatetop;
+  animation-duration: 1s;
+`;
+
+const Close = styled.span`
+  color: red;
+  float: right;
+  font-size: 22px;
+  font-weight: bold;
+  border-radius: 100%;
+  background-color: white;
+  cursor: pointer;
+`;
+
+const Input = styled.input`
+background-color: #ddd;
+  border: none;
+  outline: none;
+  color: black;
+  text-align: center;
+  margin: 4px 2px;
+  cursor: pointer;
+  border-radius: 16px;
+`
+
 export default function EntryList(props) {
+  const dispatch = useDispatch();
   const entries = useSelector((state) => state.data.entries);
   const user = useSelector((state) => state.user.currentUser);
+  const [keyResponse, setKeyResponse] = useState("");
+  const [confirm, setConfirm] = useState("Confirm");
+  const [id, setId] = useState(""); // if id is not empty modal will open
+  const [key, setKey] = useState("");
+  console.log(key);
+  const deleteHandler = () => {
+    setConfirm("Deleting..");
+    deleteEntry(id, key, dispatch).then((res) => {
+      setKeyResponse(res);
+    });
+  };
 
   return (
     <Container>
+      {/* Delete Entry Model */}
+      {id && (
+        <Modal>
+          <ModalContent>
+            {keyResponse === "" && (
+              <>
+                <ModalHeader>
+                  <Close onClick={() => setId(false)}>&times;</Close>
+                  Enter your key below and click confirm to delete the entry.
+                </ModalHeader>
+                <ModalBody>
+                  <Input
+                    type="number"
+                    placeholder="0000"
+                    name="admin_key"
+                    value={key}
+                    onChange={(e) => setKey(e.target.value)}
+                  />
+                  <span onClick={deleteHandler}>{confirm}</span>
+                </ModalBody>
+              </>
+            )}
+            {keyResponse !== "" && (
+              <>
+                <ModalHeader>
+                  <Close
+                    onClick={() => {
+                      setId(false);
+                      setKeyResponse("");
+                      setConfirm("Confirm");
+                    }}
+                  >
+                    &times;
+                  </Close>
+                </ModalHeader>
+                <ModalFooter>{keyResponse}</ModalFooter>
+              </>
+            )}
+          </ModalContent>
+        </Modal>
+      )}
+
       <TABLE>
         <CAPTION>{props.month} Report</CAPTION>
         <TBODY>
@@ -54,23 +178,29 @@ export default function EntryList(props) {
             <TH>Reserved</TH>
             <TH>By</TH>
             {user.members.map((i) => (
-              <TH>{i}</TH>
+              <TH key={i}>{i}</TH>
             ))}
             <TH>Daily Total</TH>
+            <TH>Actions</TH>
           </TR>
         </TBODY>
         {entries.length > 0 &&
           entries.map((item) => (
-            <TBODY key={item?._id}>
+            <TBODY key={item._id}>
               <TR>
-                <TD>{item?.date}</TD>
-                <TD>{item?.spent}</TD>
-                <TD>{item?.reserved}</TD>
-                <TD>{item?.by}</TD>
+                <TD>{item.date}</TD>
+                <TD>{item.spent}</TD>
+                <TD>{item.reserved}</TD>
+                <TD>{item.by}</TD>
                 {user.members.map((i) => (
                   <TD>{item.meals[`${i}`]}</TD>
                 ))}
-                <TD>{item?.totalMeals}</TD>
+                <TD>{item.totalMeals}</TD>
+                {props.date === item.date ? (
+                  <TD onClick={() => setId(item._id)}> 🗑️ Delete</TD>
+                ) : (
+                  <TD></TD>
+                )}
               </TR>
             </TBODY>
           ))}

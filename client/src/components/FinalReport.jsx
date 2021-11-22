@@ -7,23 +7,24 @@ const Container = styled.div`
 const MAINTABLE = styled.table`
   margin-bottom: 1px;
   width: 100%;
-  box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
-  -webkit-box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
-  -moz-box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
+  background-color: #a79ea2e6;
 `;
 const TABLE = styled.table`
   margin-bottom: 2px;
   width: 100%;
   box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
-  -webkit-box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
-  -moz-box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
+  &:nth-child(even) {
+    background-color: #c0d4e4;
+ }
+  background-color: #fbfcfd;
   `;
 const CAPTION = styled.caption`
   font-weight: bolder;
   display: inline;
 `;
 
-const TBODY = styled.tbody``;
+const TBODY = styled.tbody`
+`;
 const TR = styled.tr`
   display: flex;
 `;

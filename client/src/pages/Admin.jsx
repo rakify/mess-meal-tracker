@@ -38,6 +38,7 @@ const Admin = () => {
   Month[10] = "November";
   Month[11] = "December";
   const d = new Date();
+  let date = d.getDate();
   let month = Month[d.getMonth()];
 
   return (
@@ -52,7 +53,7 @@ const Admin = () => {
           </Menu>
           <br />
           <br />
-          <EntryList month={month} />
+          <EntryList month={month} date={date} />
         </>
       )}
     </Container>

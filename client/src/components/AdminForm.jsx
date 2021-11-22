@@ -126,10 +126,14 @@ const ForgotClick = styled.button`
   cursor: pointer;
 `;
 
+const MealsContainer = styled.div`
+display: flex;
+flex-wrap: wrap;
+`
+
 const AdminForm = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
-  const data = useSelector((state) => state.data);
 
   const d = new Date();
   let date = d.getDate();
@@ -174,11 +178,10 @@ const AdminForm = () => {
     for (const i in meals) {
       totalMeals += meals[i];
     }
-    addEntry({ ...inputs, meals, totalMeals }, dispatch).then((res) =>{
+    addEntry({ ...inputs, meals, totalMeals }, dispatch).then((res) => {
       setError(res.request);
       setLoading(false);
-    }
-    );
+    });
   };
 
   const requestKey = () => {
@@ -188,7 +191,6 @@ const AdminForm = () => {
 
   return (
     <>
-    <br />
       {/* Reset Key Modal */}
       {prompt && (
         <Modal>
@@ -295,12 +297,12 @@ const AdminForm = () => {
         </InputTitle>
         Can't Remember (
         <ForgotClick onClick={() => setPrompt(true)}>?</ForgotClick>)
-      
-        <div style={{ textDecoration: "underline"}}>Meals</div>
+        {/* Meals Container */}
+        <MealsContainer>
+        <h4 style={{ textDecoration: "underline overline" }}>Meals</h4>
         {user.members.map((i) => (
           <>
-            <InputTitle>
-              {" "}
+            <InputTitle style={{ margin: "10px 0px 0px 10px" }}>
               {i}:
               <Input
                 style={{ width: "60px" }}
@@ -311,11 +313,9 @@ const AdminForm = () => {
                 required
               ></Input>
             </InputTitle>
-            <br />
           </>
         ))}
-
-<br />
+        </MealsContainer>
         {/* If Button is Loading */}
         {loading && (
           <ButtonOnLoad disabled>
@@ -325,6 +325,7 @@ const AdminForm = () => {
         {/* Normal Button */}
         {!loading && <Button>Submit</Button>}
       </Form>
+      <br />
     </>
   );
 };

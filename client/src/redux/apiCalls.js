@@ -5,7 +5,7 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
-  } from "./userRedux";
+} from "./userRedux";
 import {
   getEntriesStart,
   getEntriesSuccess,
@@ -34,7 +34,7 @@ export const logout = async () => {
 export const updateUser = async (id, user, dispatch) => {
   dispatch(updateUserStart());
   try {
-    const res = await axios.put(`/auth/${id}`, {members: user});
+    const res = await axios.put(`/auth/${id}`, { members: user });
     dispatch(updateUserSuccess(res.data));
   } catch (err) {
     dispatch(updateUserFailure(err.response.data));
@@ -43,10 +43,10 @@ export const updateUser = async (id, user, dispatch) => {
 
 export const updateKey = async (id) => {
   try {
-    const res = await axios.put(`/auth/${id}`, {key: true});
+    const res = await axios.put(`/auth/${id}`, { key: true });
     return res;
   } catch (err) {
-  return err
+    return err;
   }
 };
 
@@ -77,18 +77,19 @@ export const getEntry = async (username, dispatch) => {
     const res = await axios.get(`/entries/${username}`);
     dispatch(getEntriesSuccess(res.data));
   } catch (err) {
-    console.log(err)
     dispatch(getEntriesFailure());
   }
 };
 
-export const deleteEntry = async (id, dispatch) => {
+export const deleteEntry = async (id, key, dispatch) => {
   dispatch(deleteEntriesStart());
   try {
-    await axios.delete(`/entries/${id}`);
+    const res = await axios.delete(`/entries/${id}`, { data: { admin_key: key } });
     dispatch(deleteEntriesSuccess({ id: id }));
+    return res.data;
   } catch (err) {
     dispatch(deleteEntriesFailure());
+    return err.response.data;
   }
 };
 

@@ -2,7 +2,6 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { login, register } from "./../redux/apiCalls";
-import axios from "axios";
 import styled from "styled-components";
 import Topbar from "../components/Topbar";
 
