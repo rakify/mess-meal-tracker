@@ -61,9 +61,16 @@ router.get("/find/:id", async (req, res) => {
 });
 
 //GET ALL Entries by per user
-router.get("/:username", async (req, res) => {
+router.get("/:username/:year/:month", async (req, res) => {
   try {
-    let entries = await Entry.find({ user: req.params.username });
+    const month = req.params.month;
+    const year = req.params.year;
+    const fromDate = new Date(year, month, 1);
+    const toDate = new Date(year, month, 31);
+    let entries = await Entry.find({
+      user: req.params.username,
+      $and: [{ createdAt: { $gt: fromDate } }, { createdAt: { $lt: toDate } }],
+    }).sort({ createdAt: -1 });
     res.status(200).json(entries);
   } catch (err) {
     res.status(500).json(err);

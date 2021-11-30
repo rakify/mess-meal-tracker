@@ -71,10 +71,10 @@ export const register = async (user) => {
   }
 };
 
-export const getEntry = async (username, dispatch) => {
+export const getEntry = async (username, month, year, dispatch) => {
   dispatch(getEntriesStart());
   try {
-    const res = await axios.get(`/entries/${username}`);
+    const res = await axios.get(`/entries/${username}/${year}/${month}`);
     dispatch(getEntriesSuccess(res.data));
   } catch (err) {
     dispatch(getEntriesFailure());

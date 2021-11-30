@@ -4,10 +4,10 @@ import { getEntry } from "../redux/apiCalls";
 import { useEffect } from "react";
 import { mobile } from "../responsive";
 import Topbar from "../components/Topbar";
-import AdminForm from "../components/AdminForm";
 import EntryList from "../components/EntryList";
 import FinalReport from "../components/FinalReport";
 import AddMember from '../components/AddMember';
+import { useParams } from "react-router";
 
 const Container = styled.div`
 `;
@@ -20,9 +20,7 @@ const Admin = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
 
-  useEffect(() => {
-    getEntry(user.username, dispatch);
-  }, [user, dispatch]);
+  const  p = useParams();
 
   const Month = [];
   Month[0] = "January";
@@ -39,6 +37,15 @@ const Admin = () => {
   Month[11] = "December";
   const d = new Date();
   let month = Month[d.getMonth()];
+  let monthId = p.month || d.getMonth();
+  let year = p.year || d.getFullYear();
+
+  console.log(monthId,year)
+
+  useEffect(() => {
+    getEntry(user.username, monthId, year, dispatch);
+  }, [user, dispatch, monthId, year]);
+
 
   return (
     <Container>
@@ -51,7 +58,7 @@ const Admin = () => {
           </Menu>
           <br />
           <br />
-          <EntryList month={month} />
+          <EntryList month={month} year={year} />
         </>
       )}
     </Container>

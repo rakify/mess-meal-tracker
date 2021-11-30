@@ -131,7 +131,7 @@ display: flex;
 flex-wrap: wrap;
 `
 
-const AdminForm = () => {
+const EntryForm = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
 
@@ -330,4 +330,4 @@ const AdminForm = () => {
   );
 };
 
-export default AdminForm;
+export default EntryForm;

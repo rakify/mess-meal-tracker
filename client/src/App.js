@@ -32,6 +32,7 @@ function App() {
           element={user ? <Navigate to="/" /> : <Register />}
         />
         <Route exact path="/profile" element={user ? <Navigate to="/" /> : <Profile />} />
+        <Route exact path="/:year/:month" element={user? <Home />:<Login />} />
         <Route exact path="/" element={user? <Home />:<Login />} />
         <Route exact path="/admin" element={user? <Admin />:<Login />} />
       </Routes>

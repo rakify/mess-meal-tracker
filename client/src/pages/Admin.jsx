@@ -4,13 +4,13 @@ import { getEntry } from "../redux/apiCalls";
 import { useEffect } from "react";
 import { mobile } from "../responsive";
 import Topbar from "../components/Topbar";
-import AdminForm from "../components/AdminForm";
+import EntryForm from "../components/EntryForm";
 import EntryList from "../components/EntryList";
 import FinalReport from "../components/FinalReport";
-import AddMember from '../components/AddMember';
+import AddMember from "../components/AddMember";
+// import MemberForm from "../components/MemberForm";
 
-const Container = styled.div`
-`;
+const Container = styled.div``;
 const Menu = styled.div`
   display: flex;
   ${mobile({ flexDirection: "column" })}
@@ -19,11 +19,6 @@ const Menu = styled.div`
 const Admin = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
-
-  useEffect(() => {
-    getEntry(user.username, dispatch);
-  }, [user, dispatch]);
-
   const Month = [];
   Month[0] = "January";
   Month[1] = "February";
@@ -40,19 +35,26 @@ const Admin = () => {
   const d = new Date();
   let date = d.getDate();
   let month = Month[d.getMonth()];
+  let monthId = d.getMonth();
+  let year = d.getFullYear();
+
+  useEffect(() => {
+    getEntry(user.username, monthId, year, dispatch);
+  }, [user, dispatch, monthId, year]);
 
   return (
     <Container>
       <Topbar />
-      {user.members.length===0 && <AddMember />}
+      {user.members.length === 0 && <AddMember />}
       {user.members.length > 0 && (
         <>
           <Menu>
-            {user && <AdminForm />}
-            <FinalReport />
+            {user && <EntryForm />}
+            {/* {user && <MemberForm />} */}
           </Menu>
           <br />
           <br />
+          <FinalReport />
           <EntryList month={month} date={date} />
         </>
       )}

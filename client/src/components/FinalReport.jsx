@@ -61,7 +61,6 @@ const FinalReport = () => {
   for (let i = 0; i < user.members.length; i++) {
     initialReserved[user.members[i]] = 0;
   }
-  console.log(initialMeals["Rakib"]);
 
   for (const i in entries) {
     const by = entries[i].by;
