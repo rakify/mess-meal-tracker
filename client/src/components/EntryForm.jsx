@@ -2,12 +2,14 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { addEntry, updateKey } from "../redux/apiCalls";
 import { useState } from "react";
+import UpdateUser from "./UpdateUser";
 
 const Form = styled.form`
   flex: 1;
 `;
 
 const Title = styled.div`
+  color: #20ad4ae8;
   font-weight: bolder;
   font-size: 20px;
   background-color: ghostwhite;
@@ -16,6 +18,8 @@ const Top = styled.div`
   display: flex;
 `;
 const InputTitle = styled.div`
+  color: #20ad4ae8;
+  font-weight: bolder;
   margin-right: 3px;
   display: inline-block;
   -moz-box-sizing: border-box;
@@ -23,6 +27,7 @@ const InputTitle = styled.div`
   box-sizing: border-box;
 `;
 const Input = styled.input`
+  outline: none;
   width: 200px;
   height: 25px;
   padding: 9px;
@@ -41,12 +46,13 @@ const Select = styled.select`
   cursor: pointer;
 `;
 const Button = styled.button`
-  background-color: #04aa6d;
-  width: 100px;
+  background-color: #066d47a4;
+  width: 70px;
   border: none;
   color: white;
-  padding: 5px;
+  padding: 2px;
   cursor: pointer;
+  border-radius: 12px;
 `;
 const ButtonOnLoad = styled.button`
   background-color: #04aa6d;
@@ -127,9 +133,9 @@ const ForgotClick = styled.button`
 `;
 
 const MealsContainer = styled.div`
-display: flex;
-flex-wrap: wrap;
-`
+  display: flex;
+  flex-wrap: wrap;
+`;
 
 const EntryForm = () => {
   const dispatch = useDispatch();
@@ -218,13 +224,18 @@ const EntryForm = () => {
 
       {/* Admin Form */}
       <Form onSubmit={handleSubmit}>
+        {/* Start Form Inputs */}
+        <Title>Submit Todays Entry</Title>
+        <br />
         {/* If Error Fetched By Server */}
         {error.status === 200 && (
           <Error
             style={{
-              color: "#4F8A10",
+              color: "#270",
               backgroundColor: "#DFF2BF",
-              backgroundImage: `url("https://i.imgur.com/Q9BGTuy.png")`,
+              margin: "10px 0",
+              padding: "10px",
+              borderRadius: "3px 3px 3px 3px",
             }}
           >
             Entry Added Successfully.
@@ -235,15 +246,14 @@ const EntryForm = () => {
             style={{
               color: "#D8000C",
               backgroundColor: "#FFBABA",
-              backgroundImage: `url(${"https://i.imgur.com/GnyDvKN.png"})`,
+              margin: "10px 0",
+              padding: "10px",
+              borderRadius: "3px 3px 3px 3px",
             }}
           >
             {error.responseText.slice(1, -1)}
           </Error>
         )}
-        {/* Start Form Inputs */}
-        <Title>Submit Todays Entry</Title>
-        <br />
         <Top>
           <InputTitle>
             Money Spent:
@@ -278,15 +288,17 @@ const EntryForm = () => {
                 Select
               </option>
               {user.members.map((i) => (
-                <option value={i}>{i}</option>
+                <option value={i} key={i}>
+                  {i}
+                </option>
               ))}
             </Select>
           </InputTitle>
         </Top>
         <InputTitle>
-          Key:
+          Manager Key:
           <Input
-            style={{ width: "100px", margin: "3px" }}
+            style={{ fontSize: "12px", width: "70px" }}
             type="number"
             placeholder="0000"
             name="admin_key"
@@ -299,10 +311,17 @@ const EntryForm = () => {
         <ForgotClick onClick={() => setPrompt(true)}>?</ForgotClick>)
         {/* Meals Container */}
         <MealsContainer>
-        <h4 style={{ textDecoration: "underline overline" }}>Meals</h4>
-        {user.members.map((i) => (
-          <>
-            <InputTitle style={{ margin: "10px 0px 0px 10px" }}>
+          <div
+            style={{
+              textDecoration: "underline overline",
+              marginBottom: "3px",
+              marginTop: "3px",
+            }}
+          >
+            Meals:{" "}
+          </div>
+          {user.members.map((i) => (
+            <InputTitle key={i} style={{ margin: "10px 0px 0px 10px" }}>
               {i}:
               <Input
                 style={{ width: "60px" }}
@@ -313,8 +332,7 @@ const EntryForm = () => {
                 required
               ></Input>
             </InputTitle>
-          </>
-        ))}
+          ))}
         </MealsContainer>
         {/* If Button is Loading */}
         {loading && (
@@ -325,6 +343,7 @@ const EntryForm = () => {
         {/* Normal Button */}
         {!loading && <Button>Submit</Button>}
       </Form>
+      <UpdateUser />
       <br />
     </>
   );

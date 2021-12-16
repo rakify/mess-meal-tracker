@@ -1,5 +1,7 @@
 import styled from "styled-components";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useState } from "react";
+import { updateUser } from "../redux/apiCalls";
 
 const Container = styled.div`
   flex: 1;
@@ -12,19 +14,18 @@ const MAINTABLE = styled.table`
 const TABLE = styled.table`
   margin-bottom: 2px;
   width: 100%;
-  box-shadow: 1px 1px 1px 0.5px rgba(0,0,0,0.75) inset;
+  box-shadow: 1px 1px 1px 0.5px rgba(0, 0, 0, 0.75) inset;
   &:nth-child(even) {
     background-color: #c0d4e4;
- }
+  }
   background-color: #fbfcfd;
-  `;
+`;
 const CAPTION = styled.caption`
   font-weight: bolder;
   display: inline;
 `;
 
-const TBODY = styled.tbody`
-`;
+const TBODY = styled.tbody``;
 const TR = styled.tr`
   display: flex;
 `;
@@ -42,10 +43,34 @@ const TD = styled.td`
   justify-content: center;
   align-items: center;
 `;
+const Input = styled.input`
+  outline: none;
+  font-size: 12px;
+  width: 50px;
+`;
+const Button = styled.button`
+  background-color: #7a0710;
+  width: 35px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  border-radius: 40%;
+`;
+const Info = styled.div`
+  color: #059;
+  background-color: #bef;
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 3px 3px 3px 3px;
+`;
 
-const FinalReport = () => {
+const FinalReport = ({ admin }) => {
+  const dispatch = useDispatch();
   const entries = useSelector((state) => state.data.entries);
   const user = useSelector((state) => state.user.currentUser);
+  const [key, setKey] = useState("");
+  const [info, setInfo] = useState("");
+
   let allMeals = 0,
     allSpent = 0,
     allReserved = 0;
@@ -70,12 +95,21 @@ const FinalReport = () => {
     allReserved += entries[i].reserved;
     for (let j = 0; j < user.members.length; j++) {
       initialMeals[user.members[j]] += entries[i].meals[user.members[j]];
+      if (isNaN(initialMeals[user.members[j]]))
+        initialMeals[user.members[j]] = 0;
     }
   }
   let mealRate = allSpent / allMeals;
 
+  const deleteMember = (id) => {
+    let members = [...user.members];
+    members.splice(id, 1);
+    updateUser(user._id, { members: members, admin_key: key }, dispatch);
+  };
+
   return (
     <Container>
+      {info && <Info>{info}</Info>}
       <MAINTABLE>
         <CAPTION>Final Calculation</CAPTION>
         <TBODY>
@@ -90,31 +124,65 @@ const FinalReport = () => {
         <TBODY>
           <TR>
             <TD>{allMeals}</TD>
-            <TD>{allSpent}</TD>
-            <TD>{allReserved}</TD>
-            <TD>{allReserved-allSpent}</TD>
-            <TD>{mealRate.toFixed(2)}</TD>
+            <TD>{allSpent.toFixed(2)}</TD>
+            <TD>{allReserved.toFixed(2)}</TD>
+            <TD>{(allReserved - allSpent).toFixed(2)}</TD>
+            <TD>{isNaN(mealRate)?"0.00":mealRate.toFixed(2)}</TD>
           </TR>
         </TBODY>
       </MAINTABLE>
       <br />
-      {user.members.map(i=> (<TABLE>
-        <CAPTION>{i}</CAPTION>
-        <TBODY>
-          <TR>
-            <TH>Meals</TH>
-            <TH>Reserved</TH>
-            <TH>Due</TH>
-          </TR>
-        </TBODY>
-        <TBODY>
-          <TR>
-            <TD>{initialMeals[i]}</TD>
-            <TD>{initialReserved[i]}</TD>
-            <TD>{(initialReserved[i] - initialMeals[i] * mealRate).toFixed(2)}</TD>
-          </TR>
-        </TBODY>
-      </TABLE>))}
+      {user.members.map((i, j) => (
+        <TABLE key={j}>
+          <CAPTION>{i}</CAPTION>
+          <TBODY>
+            <TR>
+              <TH>Meals</TH>
+              <TH>Reserved</TH>
+              <TH>Due(-) | Extra(+)</TH>
+              {admin && <TH>Actions</TH>}
+            </TR>
+          </TBODY>
+          <TBODY>
+            <TR>
+              <TD>{initialMeals[i]}</TD>
+              <TD>{initialReserved[i].toFixed(2)}</TD>
+              <TD>
+                {isNaN(initialReserved[i] - initialMeals[i] * mealRate)?"0.00":(initialReserved[i] - initialMeals[i] * mealRate).toFixed(2)}
+              </TD>
+              {admin && initialMeals[i] === 0 && initialReserved[i] === 0 ? (
+                <TD>
+                  <Input
+                    type="number"
+                    name="key"
+                    minLength="4"
+                    maxLength="4"
+                    value={key}
+                    placeholder="Key"
+                    required
+                    onChange={(e) => setKey(e.target.value)}
+                  />
+                  <Button onClick={(e) => deleteMember(j)}>✘</Button>
+                </TD>
+              ) : (
+                admin && (
+                  <TD>
+                    <Button
+                      onClick={() =>
+                        setInfo(
+                          `You Can't Do Anything With This Member Right Now Since S/He Has Contributed To This Month.`
+                        )
+                      }
+                    >
+                      VIP
+                    </Button>
+                  </TD>
+                )
+              )}
+            </TR>
+          </TBODY>
+        </TABLE>
+      ))}
     </Container>
   );
 };

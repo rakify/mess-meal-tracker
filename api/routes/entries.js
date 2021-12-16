@@ -70,7 +70,7 @@ router.get("/:username/:year/:month", async (req, res) => {
     let entries = await Entry.find({
       user: req.params.username,
       $and: [{ createdAt: { $gt: fromDate } }, { createdAt: { $lt: toDate } }],
-    }).sort({ createdAt: -1 });
+    });
     res.status(200).json(entries);
   } catch (err) {
     res.status(500).json(err);

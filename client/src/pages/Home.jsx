@@ -6,7 +6,7 @@ import { mobile } from "../responsive";
 import Topbar from "../components/Topbar";
 import EntryList from "../components/EntryList";
 import FinalReport from "../components/FinalReport";
-import AddMember from '../components/AddMember';
+import UpdateUser from '../components/UpdateUser';
 import { useParams } from "react-router";
 
 const Container = styled.div`
@@ -36,11 +36,21 @@ const Admin = () => {
   Month[10] = "November";
   Month[11] = "December";
   const d = new Date();
-  let month = Month[d.getMonth()];
-  let monthId = p.month || d.getMonth();
-  let year = p.year || d.getFullYear();
+  let monthId = p.monthId?p.monthId:d.getMonth();
+  let month = Month[monthId];
+  let year = p.year?p.year:d.getFullYear();
+  let prevMonthId, prevMonth, prevYear;
 
-  console.log(monthId,year)
+  if (monthId === "0") {
+    prevMonthId = 11;
+    prevYear = year - 1;
+    prevMonth = "December";
+  } else {
+    prevMonthId = monthId - 1;
+    prevMonth = Month[prevMonthId];
+    prevYear = year;
+  }
+
 
   useEffect(() => {
     getEntry(user.username, monthId, year, dispatch);
@@ -50,7 +60,7 @@ const Admin = () => {
   return (
     <Container>
       <Topbar />
-      {user.members.length===0 && <AddMember />}
+      {user.members.length===0 && <UpdateUser />}
       {user.members.length > 0 && (
         <>
           <Menu>
@@ -58,7 +68,7 @@ const Admin = () => {
           </Menu>
           <br />
           <br />
-          <EntryList month={month} year={year} />
+          <EntryList month={month} prevMonth={prevMonth} prevMonthId={prevMonthId} prevYear={prevYear} />
         </>
       )}
     </Container>

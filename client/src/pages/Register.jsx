@@ -8,13 +8,23 @@ import Topbar from "../components/Topbar";
 const Form = styled.form``;
 const Fieldset = styled.fieldset`
   border: 1px solid grey;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: whitesmoke;
 `;
 const Legend = styled.legend`
   font-weight: bolder;
+`;
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-around;
+  background-color: whitesmoke;
+`;
+const Label = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  margin-bottom: 3px;
 `;
 const Input = styled.input`
   outline: none;
@@ -22,25 +32,20 @@ const Input = styled.input`
   margin-bottom: 10px;
   padding: 10px;
 `;
-const Error = styled.div`
-  border: 1px solid;
-  margin: 10px 0px;
-  padding: 15px 10px 15px 50px;
-  background-repeat: no-repeat;
-  background-position: 10px center;
-  white-space: pre-line;
+const Error = styled.span`
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 3px 3px 3px 3px;
+  color: #059;
+  background-color: #bef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 const Button = styled.button`
   width: 100px;
   padding: 5px;
   background-color: #daeeda;
-`;
-const ButtonOnLoad = styled.button`
-  background-color: #04aa6d;
-  width: 100px;
-  border: none;
-  color: white;
-  padding: 5px;
 `;
 
 export default function Register() {
@@ -51,6 +56,7 @@ export default function Register() {
     email: "",
   });
   const [error, setError] = useState("");
+  const [show, setShow] = useState(false);
 
   const user = useSelector((state) => state.user);
 
@@ -75,82 +81,71 @@ export default function Register() {
       <Form onSubmit={handleSubmit}>
         <Fieldset>
           <Legend>Create Account</Legend>
+          <Wrapper>
+            {/* INPUT FIELDS */}
+            <Input
+              type="text"
+              placeholder="Username *"
+              name="username"
+              onChange={handleChange}
+              minLength="3"
+              maxLength="30"
+              required
+            />
+            <Input
+              type="email"
+              name="email"
+              placeholder="Email *"
+              onChange={handleChange}
+              required
+            />
+            <Input
+              type={!show?"password":"text"}
+              name="password"
+              placeholder="Password *"
+              onChange={handleChange}
+              minLength="4"
+              required
+            />
+            <Label>
+              <input type="checkbox" onChange={() => setShow(!show)} />
+              {show ? "Hide Password" : "Show Password"}
+            </Label>
 
-          {/* INPUT FIELDS */}
-          <Input
-            type="text"
-            placeholder="Username *"
-            name="username"
-            onChange={handleChange}
-            minLength="3"
-            maxLength="30"
-            required
-          />
-          <Input
-            type="email"
-            name="email"
-            placeholder="Email *"
-            onChange={handleChange}
-            required
-          />
-          <Input
-            type="password"
-            name="password"
-            placeholder="Password *"
-            onChange={handleChange}
-            minLength="4"
-            required
-          />
-          <Button disabled={user.isFetching}>Register</Button>
-
+            <Button disabled={user.isFetching}>Register</Button>
+          </Wrapper>
           {/* Fetching Error from Server Side */}
-          {error!=="" && (
-            <Error
-              style={{
-                color: "#D8000C",
-                backgroundColor: "#FFBABA",
-                backgroundImage: `url(${"https://i.imgur.com/GnyDvKN.png"})`,
-              }}
-            >
-              Username or Email Already Exists!
+          {error !== "" && (
+            <Error style={{ color: "#D8000C", backgroundColor: "#FFBABA" }}>
+             ☹ Username or email already exists!
             </Error>
           )}
 
           {/* VALIIDATION from Client Side */}
-          {(inputs.username.length <= 3 ||
-            inputs.password.length <= 4 ||
+          {(inputs.username.length < 3 ||
+            inputs.password.length < 4 ||
             !inputs.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) && (
-            <Error
-              style={{
-                color: "#9F6000",
-                backgroundColor: "#FEEFB3",
-                backgroundImage: `url(${"https://i.imgur.com/Z8q7ww7.png"})`,
-              }}
-            >
-              {inputs.username.length <= 3 &&
-                `* Username must be atleast 3 characters long.\n`}
-              {inputs.password.length <= 4 &&
-                `* Password must be atleast 4 characters long.\n`}
-              {!inputs.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) &&
-                "* Email address must be valid."}
+            <Error>
+              {inputs.username.length < 3 && (
+                <>
+                  ✯ Username must be atleast 3 characters long. <br />
+                </>
+              )}
+              {inputs.password.length < 4 && (
+                <>
+                  ✯ Password must be atleast 4 characters long.
+                  <br />
+                </>
+              )}
+              {!inputs.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/) && (
+                <>✯ Email address must be valid.</>
+              )}
             </Error>
           )}
         </Fieldset>
       </Form>
 
       {/* USEFULL LINKS */}
-      <Link
-        to="/#"
-        style={{
-          margin: "30%",
-          width: "50%",
-          fontSize: "12px",
-          textDecoration: "none",
-          cursor: "pointer",
-        }}
-      >
-        FORGOT PASSWORD?
-      </Link>
       <hr style={{ width: "50%" }} />
       <Link
         to="/login"
@@ -162,7 +157,20 @@ export default function Register() {
           cursor: "pointer",
         }}
       >
-        LOGIN HERE
+        ✿ LOGIN HERE
+      </Link>
+      <hr style={{ width: "50%" }} />
+      <Link
+        to="/forgot_pass"
+        style={{
+          margin: "30%",
+          width: "50%",
+          fontSize: "12px",
+          textDecoration: "none",
+          cursor: "pointer",
+        }}
+      >
+        ✿ FORGOT PASSWORD
       </Link>
       <hr style={{ width: "50%" }} />
     </>

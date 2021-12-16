@@ -31,13 +31,35 @@ export const logout = async () => {
   window.location = "/login";
 };
 
+export const forgotPass = async (email) => {
+  try {
+    const res = await axios.post("/auth/forgot-pass", { email: email });
+    return res;
+  } catch (err) {
+    return err.response;
+  }
+};
+
+export const resetPass = async (password, userId, token) => {
+  try {
+    const res = await axios.post(`/auth/reset-pass/${userId}/${token}`, {
+      password: password,
+    });
+    return res;
+  } catch (err) {
+    return err.response;
+  }
+};
+
 export const updateUser = async (id, user, dispatch) => {
   dispatch(updateUserStart());
   try {
-    const res = await axios.put(`/auth/${id}`, { members: user });
+    const res = await axios.put(`/auth/${id}`, user);
     dispatch(updateUserSuccess(res.data));
+    return res;
   } catch (err) {
     dispatch(updateUserFailure(err.response.data));
+    return err;
   }
 };
 
@@ -84,7 +106,9 @@ export const getEntry = async (username, month, year, dispatch) => {
 export const deleteEntry = async (id, key, dispatch) => {
   dispatch(deleteEntriesStart());
   try {
-    const res = await axios.delete(`/entries/${id}`, { data: { admin_key: key } });
+    const res = await axios.delete(`/entries/${id}`, {
+      data: { admin_key: key },
+    });
     dispatch(deleteEntriesSuccess({ id: id }));
     return res.data;
   } catch (err) {

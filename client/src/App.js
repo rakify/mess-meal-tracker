@@ -10,6 +10,7 @@ import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Register from "./pages/Register";
 import Profile from './pages/Profile';
+import ForgotPass from './components/ForgotPass';
 
 function App() {
   const user = useSelector((state) => state.user.currentUser);
@@ -32,10 +33,12 @@ function App() {
           element={user ? <Navigate to="/" /> : <Register />}
         />
         <Route exact path="/profile" element={user ? <Navigate to="/" /> : <Profile />} />
-        <Route exact path="/:year/:month" element={user? <Home />:<Login />} />
-        <Route exact path="/" element={user? <Home />:<Login />} />
         <Route exact path="/admin" element={user? <Admin />:<Login />} />
-      </Routes>
+        <Route exact path="/forgot_pass" element={user? <Home />:<ForgotPass title="Forgot Password" />} />
+        <Route exact path="/reset_pass/:userId/:token" element={user? <Home />:<ForgotPass title="Reset Password" />} />
+        <Route exact path="/:year/:monthId" element={user? <Home />:<Login />} />
+        <Route exact path="/" element={user? <Home />:<Login />} />
+        </Routes>
     </Router>
   );
 }

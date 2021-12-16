@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { mobile } from "../responsive";
 import { login } from "../redux/apiCalls";
 import styled from "styled-components";
 import { Link } from "react-router-dom";
@@ -8,13 +9,25 @@ import Topbar from "../components/Topbar";
 const Form = styled.form``;
 const Fieldset = styled.fieldset`
   border: 1px solid grey;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background-color: whitesmoke;
 `;
 const Legend = styled.legend`
   font-weight: bolder;
+`;
+
+const Wrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  background-color: whitesmoke;
+  ${mobile({ flexDirection: "column" })}
+`;
+
+const Label = styled.label`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 10px;
+  margin-bottom: 3px;
 `;
 const Input = styled.input`
   outline: none;
@@ -22,12 +35,15 @@ const Input = styled.input`
   margin-bottom: 10px;
   padding: 10px;
 `;
-const Error = styled.div`
-  border: 1px solid;
-  margin: 10px 0px;
-  padding: 15px 10px 15px 50px;
-  background-repeat: no-repeat;
-  background-position: 10px center;
+const Error = styled.span`
+  margin: 10px 0;
+  padding: 10px;
+  border-radius: 3px 3px 3px 3px;
+  color: #059;
+  background-color: #bef;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 const Button = styled.button`
   width: 100px;
@@ -47,6 +63,7 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [show, setShow] = useState(false);
 
   const user = useSelector((state) => state.user);
   const dispatch = useDispatch();
@@ -64,32 +81,39 @@ const Login = () => {
       <Form onSubmit={handleSubmit}>
         <Fieldset>
           <Legend>Login To Your Account</Legend>
+          <Wrapper>
+            {/* Input Fields */}
+            <Input
+              type="text"
+              placeholder="Username *"
+              onChange={(e) => setUsername(e.target.value)}
+              minLength="3"
+              required
+            />
+            <Input
+              type="password"
+              placeholder="Password *"
+              minLength="4"
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <Label>
+              <input type="checkbox" onChange={() => setShow(!show)} />
+              {show ? "Hide Password" : "Show Password"}
+            </Label>
 
-          {/* Input Fields */}
-          <Input
-            type="text"
-            placeholder="Username *"
-            onChange={(e) => setUsername(e.target.value)}
-            minLength="3"
-            required
-          />
-          <Input
-            type="password"
-            placeholder="Password *"
-            minLength="4"
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
+            {/* If Button is Loading */}
+            {user.isFetching && (
+              <ButtonOnLoad disabled>
+                <i className="fa fa-spinner fa-spin"></i> Logging In
+              </ButtonOnLoad>
+            )}
 
-          {/* If Button is Loading */}
-          {user.isFetching && (
-            <ButtonOnLoad disabled>
-              <i className="fa fa-spinner fa-spin"></i> Logging In
-            </ButtonOnLoad>
-          )}
+            {/* Normal Button */}
+            {!user.isFetching && <Button>Login</Button>}
+          </Wrapper>
 
-          {/* Normal Button */}
-          {!user.isFetching && <Button>Login</Button>}
+
 
           {/* If Error Fetched By Server */}
           {error !== "" && (
@@ -97,44 +121,17 @@ const Login = () => {
               style={{
                 color: "#D8000C",
                 backgroundColor: "#FFBABA",
-                backgroundImage: `url(${"https://i.imgur.com/GnyDvKN.png"})`,
               }}
             >
               {error.slice(1, -1)}
             </Error>
           )}
-
-          {/* Validation from Client Side */}
-          {(username.length <= 3 || password.length <= 4) && (
-            <Error
-              style={{
-                color: "#00529B",
-                backgroundColor: "#BDE5F8",
-                backgroundImage: `url(${"https://i.imgur.com/ilgqWuX.png"})`,
-              }}
-            >
-              {username.length <= 3 &&
-                <div>* Username must be atleast 3 characters long.</div>}
-              {password.length <= 4 &&
-                <div>* Password must be atleast 4 characters long.</div>}
-            </Error>
-          )}
         </Fieldset>
       </Form>
 
+
+
       {/* Useful Links */}
-      <Link
-        to="/#"
-        style={{
-          margin: "30%",
-          width: "50%",
-          fontSize: "12px",
-          textDecoration: "none",
-          cursor: "pointer",
-        }}
-      >
-        FORGOT PASSWORD?
-      </Link>
       <hr style={{ width: "50%" }} />
       <Link
         to="/register"
@@ -146,7 +143,20 @@ const Login = () => {
           cursor: "pointer",
         }}
       >
-        REGISTER HERE
+        ✿ REGISTER HERE
+      </Link>
+      <hr style={{ width: "50%" }} />
+      <Link
+        to="/forgot_pass"
+        style={{
+          margin: "30%",
+          width: "50%",
+          fontSize: "12px",
+          textDecoration: "none",
+          cursor: "pointer",
+        }}
+      >
+        ✿ FORGOT PASSWORD
       </Link>
       <hr style={{ width: "50%" }} />
     </>

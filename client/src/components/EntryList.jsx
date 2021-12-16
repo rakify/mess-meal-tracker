@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { deleteEntry } from "./../redux/apiCalls";
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 const Container = styled.div`
   display: flex;
@@ -99,7 +100,7 @@ const Close = styled.span`
 `;
 
 const Input = styled.input`
-background-color: #ddd;
+  background-color: #ddd;
   border: none;
   outline: none;
   color: black;
@@ -107,7 +108,7 @@ background-color: #ddd;
   margin: 4px 2px;
   cursor: pointer;
   border-radius: 16px;
-`
+`;
 
 export default function EntryList(props) {
   const dispatch = useDispatch();
@@ -117,7 +118,7 @@ export default function EntryList(props) {
   const [confirm, setConfirm] = useState("Confirm");
   const [id, setId] = useState(""); // if id is not empty modal will open
   const [key, setKey] = useState("");
-  console.log(key);
+
   const deleteHandler = () => {
     setConfirm("Deleting..");
     deleteEntry(id, key, dispatch).then((res) => {
@@ -126,85 +127,109 @@ export default function EntryList(props) {
   };
 
   return (
-    <Container>
-      {/* Delete Entry Model */}
-      {id && (
-        <Modal>
-          <ModalContent>
-            {keyResponse === "" && (
-              <>
-                <ModalHeader>
-                  <Close onClick={() => setId(false)}>&times;</Close>
-                  Enter your key below and click confirm to delete the entry.
-                </ModalHeader>
-                <ModalBody>
-                  <Input
-                    type="number"
-                    placeholder="0000"
-                    name="admin_key"
-                    value={key}
-                    onChange={(e) => setKey(e.target.value)}
-                  />
-                  <span onClick={deleteHandler}>{confirm}</span>
-                </ModalBody>
-              </>
-            )}
-            {keyResponse !== "" && (
-              <>
-                <ModalHeader>
-                  <Close
-                    onClick={() => {
-                      setId(false);
-                      setKeyResponse("");
-                      setConfirm("Confirm");
-                    }}
-                  >
-                    &times;
-                  </Close>
-                </ModalHeader>
-                <ModalFooter>{keyResponse}</ModalFooter>
-              </>
-            )}
-          </ModalContent>
-        </Modal>
-      )}
+    <>
+      <Container>
+        {/* Delete Entry Model */}
+        {id && (
+          <Modal>
+            <ModalContent>
+              {keyResponse === "" && (
+                <>
+                  <ModalHeader>
+                    <Close onClick={() => setId(false)}>&times;</Close>
+                    Enter your key below and click confirm to delete the
+                    requested entry:
+                  </ModalHeader>
+                  <ModalBody>
+                    <Input
+                      type="number"
+                      placeholder="0000"
+                      name="admin_key"
+                      value={key}
+                      onChange={(e) => setKey(e.target.value)}
+                    />
+                    <span onClick={deleteHandler}>{confirm}</span>
+                  </ModalBody>
+                </>
+              )}
+              {keyResponse !== "" && (
+                <>
+                  <ModalHeader>
+                    <Close
+                      onClick={() => {
+                        setId(false);
+                        setKeyResponse("");
+                        setConfirm("Confirm");
+                      }}
+                    >
+                      &times;
+                    </Close>
+                  </ModalHeader>
+                  <ModalFooter>{keyResponse}</ModalFooter>
+                </>
+              )}
+            </ModalContent>
+          </Modal>
+        )}
 
-      <TABLE>
-        <CAPTION>{props.month} Report</CAPTION>
-        <TBODY>
-          <TR>
-            <TH>Date</TH>
-            <TH>Spent</TH>
-            <TH>Reserved</TH>
-            <TH>By</TH>
-            {user.members.map((i) => (
-              <TH key={i}>{i}</TH>
-            ))}
-            <TH>Daily Total</TH>
-            <TH>Actions</TH>
-          </TR>
-        </TBODY>
-        {entries.length > 0 &&
-          entries.map((item) => (
-            <TBODY key={item._id}>
-              <TR>
-                <TD>{item.date}</TD>
-                <TD>{item.spent}</TD>
-                <TD>{item.reserved}</TD>
-                <TD>{item.by}</TD>
-                {user.members.map((i) => (
-                  <TD>{item.meals[`${i}`]}</TD>
+        <TABLE>
+          <CAPTION>{props.month} Report</CAPTION>
+          {entries.length === 0 ? (
+           <>
+           <h3>As empty as a politician's promises. ツ</h3>
+           <h4>Lets start updating data by clicking on your username.</h4>
+           </>
+          ) : (
+            <>
+              <TBODY>
+                <TR>
+                  <TH>Date</TH>
+                  <TH>Spent</TH>
+                  <TH>Reserved</TH>
+                  <TH>By</TH>
+                  {user.members.map((i) => (
+                    <TH key={i}>{i}</TH>
+                  ))}
+                  <TH>Daily Total</TH>
+                  {props.admin && <TH>Actions</TH>}
+                </TR>
+              </TBODY>
+              {entries.length > 0 &&
+                entries.map((item, j) => (
+                  <TBODY key={item._id}>
+                    <TR>
+                      <TD>{item.date}</TD>
+                      <TD>{item.spent.toFixed(2)}</TD>
+                      <TD>{item.reserved.toFixed(2)}</TD>
+                      <TD>{item.by}</TD>
+                      {user.members.map((i) => (
+                        <TD key={i}>
+                          {item.meals[`${i}`] ? item.meals[`${i}`] : 0}
+                        </TD>
+                      ))}
+                      <TD>{item?.totalMeals}</TD>
+                      {props.admin &&
+                        (props.date === item.date ||
+                        props.date - 1 === item.date ? (
+                          <TD onClick={() => setId(item._id)}> 🗑️</TD>
+                        ) : (
+                          <TD></TD>
+                        ))}
+                    </TR>
+                  </TBODY>
                 ))}
-                <TD>{item.totalMeals}</TD>
-                {props.date === item.date ? (
-                  <TD onClick={() => setId(item._id)}> 🗑️ Delete</TD>
-                ) : (
-                  <TD></TD>
-                )}
-              </TR>
-            </TBODY>
-          ))}
-      </TABLE>
-    </Container>
+            </>
+          )}
+        </TABLE>
+      </Container>
+      {!props.admin && (
+        <Link
+          to={{ pathname: `/${props.prevYear}/${props.prevMonthId}` }}
+          style={{ textDecoration: "none" }}
+        >
+          ❮ {props.prevMonth}, {props.prevYear} Report
+        </Link>
+      )}
+    </>
   );
 }

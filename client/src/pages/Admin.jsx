@@ -7,8 +7,7 @@ import Topbar from "../components/Topbar";
 import EntryForm from "../components/EntryForm";
 import EntryList from "../components/EntryList";
 import FinalReport from "../components/FinalReport";
-import AddMember from "../components/AddMember";
-// import MemberForm from "../components/MemberForm";
+import UpdateUser from "../components/UpdateUser";
 
 const Container = styled.div``;
 const Menu = styled.div`
@@ -45,7 +44,7 @@ const Admin = () => {
   return (
     <Container>
       <Topbar />
-      {user.members.length === 0 && <AddMember />}
+      {user.members.length === 0 && <UpdateUser />}
       {user.members.length > 0 && (
         <>
           <Menu>
@@ -54,8 +53,8 @@ const Admin = () => {
           </Menu>
           <br />
           <br />
-          <FinalReport />
-          <EntryList month={month} date={date} />
+          <FinalReport admin={true} />
+          <EntryList month={month} date={date} admin={true} />
         </>
       )}
     </Container>

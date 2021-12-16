@@ -22,7 +22,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
     },
     members: Array,
-    admin_key: Number
+    admin_key: Number,
   },
   { timestamps: true }
 );
