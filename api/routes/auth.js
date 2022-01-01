@@ -26,14 +26,14 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
   try {
     const user = await User.findOne({ username: req.body.username });
-    !user && res.status(401).json("User not found!");
+    if(!user) return res.status(401).json("User not found!");
 
     const validPassword = CryptoJS.AES.decrypt(
       user.password,
       process.env.pass_secret
     ).toString(CryptoJS.enc.Utf8);
-    validPassword !== req.body.password &&
-      res.status(401).json("Wrong credentials!");
+    
+    if(validPassword !== req.body.password) return res.status(401).json("Wrong credentials!");
 
     const accessToken = jwt.sign(
       {
@@ -106,7 +106,7 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
             );
         }
       });
-      console.log(updatedUser);
+      
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -145,7 +145,7 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
 //FORGOT PASSWORD LINK GENERATE
 router.post("/forgot-pass", async (req, res) => {
   const { email } = req.body;
-console.log(email)
+
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
@@ -176,7 +176,7 @@ console.log(email)
       from: "irakibm@gmail.com",
       to: user.email,
       subject: `Mess Meal Tracker - Reset Password`,
-      text: `Dear ${user.username},\nDid you just request to reset your password? If you did not simply ignore this email.\nFollow this link to reset your password. This Link will be valid for one hour only. \nLink: ${link}\nThank you for using mess meal tracker.\nIf you have any query regarding the site, please reply to this mail.`,
+      text: `Dear ${user.username},\nDid you just request to reset your password? If you did not, simply ignore this email.\nFollow this link to reset your password. This Link will be invalid after one hour and can only be used one time. \nLink: ${link}\nThank you for using mess meal tracker.\nIf you have any query regarding the site, please reply to this mail.`,
     };
 
     transporter.sendMail(mailOption, function (err, data) {
@@ -214,6 +214,7 @@ router.post("/reset-pass/:id/:token", async (req, res) => {
           newPw,
           process.env.pass_secret
         ).toString();
+        
         await User.findByIdAndUpdate(user._id, {
           password: hash,
         });
