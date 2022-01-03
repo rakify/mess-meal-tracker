@@ -10,14 +10,62 @@ const Top = styled.div`
   align-items: center;
   font-size: 30px;
   padding-bottom: 10px;
-  background-color: black;
-  color: white;
+  background-color: #71cad0;
   width: 100%;
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  font-family: 'CoreCircus', sans-serif;
+	text-transform: uppercase;
+	line-height: 1;
+	margin: 0;
+	color: #61c0c8;
+	text-shadow: 1px 0px 0px #67c2c5,
+		0px 1px 0px #67c2c5,
+		2px 1px 0px #67c2c5,
+		1px 2px 0px #67c2c5,
+		3px 2px 0px #67c2c5,
+		2px 3px 0px #67c2c5,
+		4px 3px 0px #67c2c5,
+		3px 4px 0px #67c2c5,
+		5px 4px 0px #67c2c5,
+		4px 5px 0px #67c2c5,
+		6px 5px 0px #67c2c5,
+		5px 6px 0px #67c2c5,
+		7px 6px 0px #67c2c5,
+		6px 7px 0px #67c2c5;
+
   ${mobile({ padding: 0 })}
+
+	&:before,&:after {
+		content: attr(data-heading);
+		position: absolute;
+		overflow: hidden;
+		left: 0;
+		top: 0;
+	}
+	&:before {
+		color: white;
+		width: 100%;
+		z-index: 5;
+		font-family: 'CoreCircus2DIn';
+		font-weight: normal;
+	}
+	&:after {
+		z-index: -1;
+		text-shadow: 
+			-1px -1px 0 white,
+			1px -1px 0 white, 
+			-1px 1px 0 white, 
+			1px 1px 0 white, 
+			-3px 3px 2px #6c9d9e, 
+			-5px 5px 2px #6c9d9e,
+			-7px 7px 2px #6c9d9e,
+			-8px 8px 2px #6c9d9e,
+			-9px 9px 2px #6c9d9e,
+			-11px 11px 2px #6c9d9e;
+	}
 `;
 const Nav = styled.div`
   margin-top: 50px;
@@ -62,7 +110,7 @@ const Topbar = () => {
       <Top><Link to="/" style={{textDecoration:"none", color:"white"}}>
         Mess Meal Tracker
       </Link></Top>
-      <Nav>
+       <Nav>
         {user && <NavLeft>Today is {month + " " + date + ", " + year}</NavLeft>}
         {user && (
           <NavRight>

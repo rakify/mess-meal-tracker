@@ -55,6 +55,8 @@ export default function UpdateUser({ admin }) {
   const user = useSelector((state) => state.user.currentUser);
   const [inputs, setInputs] = useState({
     email: user.email,
+    key: "",
+    member: ""
   });
   const [error, setError] = useState("");
   const [confirm, setConfirm] = useState("Set Key");
@@ -70,7 +72,7 @@ export default function UpdateUser({ admin }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     let members = user.members;
-    members = [...members, inputs.member];
+    if(inputs.member.length>0) members = [...members, inputs.member];
     const updatedUser = {
       email: inputs.email,
       admin_key: inputs.key,
@@ -93,7 +95,7 @@ export default function UpdateUser({ admin }) {
         <Title>Update Information</Title>
         <br />
         {/* If Error Fetched By Server */}
-        {error.status === 200 && (
+        {error && error.status === 200 && (
           <Error
             style={{
               color: "#270",
@@ -106,7 +108,7 @@ export default function UpdateUser({ admin }) {
             🌟 User Updated Successfully.
           </Error>
         )}
-        {error.status !== 200 && (
+        {error && error.status !== 200 && (
           <Error
             style={{
               color: "#D8000C",
@@ -152,6 +154,7 @@ export default function UpdateUser({ admin }) {
             {next ? <Label>Add Yourself: </Label> : <Label>Members: </Label>}
             {user.members.map((i) => i + ", ")}
             <Input
+              style={{textTransform: "capitalize"}}
               type="text"
               name="member"
               maxLength="20"
@@ -192,7 +195,7 @@ export default function UpdateUser({ admin }) {
               required
             />
             <br />
-            <Button>Update</Button>
+            <Button disabled={inputs.member.length===0 && inputs.email===user.email}>Update</Button>
           </>
         )}
       </Form>

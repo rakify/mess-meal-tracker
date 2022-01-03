@@ -29,7 +29,7 @@ const Label = styled.label`
 const Input = styled.input`
   outline: none;
   width: 30%;
-  margin-bottom: 10px;
+  margin: 10px;
   padding: 10px;
 `;
 const Error = styled.span`

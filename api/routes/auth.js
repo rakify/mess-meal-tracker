@@ -141,6 +141,18 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
 });
 
 // GET USER
+router.get("/", async (req, res) => {
+  const { userId, username } = req.query;
+  try {
+    const user = userId
+      ? await User.findById(userId)
+      : await User.findOne({ username: username });
+    const { password, admin_key, ...others } = user._doc;
+    res.status(200).json({...others});
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
 
 //FORGOT PASSWORD LINK GENERATE
 router.post("/forgot-pass", async (req, res) => {

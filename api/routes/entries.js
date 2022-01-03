@@ -68,9 +68,7 @@ router.get("/:username/:year/:month", async (req, res) => {
     const fromDate = new Date(year, month, 1);
     const daysInMonth = new Date(year, month+1, 0).getDate();
     const toDate = new Date(year, month, daysInMonth+1);
-
-    console.log(daysInMonth,fromDate,toDate)
-    
+  
     let entries = await Entry.find({
       user: req.params.username,
       $and: [{ createdAt: { $gt: fromDate } }, { createdAt: { $lt: toDate } }],

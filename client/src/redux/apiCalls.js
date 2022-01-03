@@ -5,6 +5,9 @@ import {
   updateUserStart,
   updateUserSuccess,
   updateUserFailure,
+  getUserStart,
+  getUserSuccess,
+  getUserFailure,
 } from "./userRedux";
 import {
   getEntriesStart,
@@ -43,7 +46,7 @@ export const forgotPass = async (email) => {
 export const resetPass = async (password, userId, token) => {
   try {
     const res = await axios.post(`/auth/reset-pass/${userId}/${token}`, {
-      password: password,
+      newPw: password,
     });
     return res;
   } catch (err) {
@@ -90,6 +93,16 @@ export const register = async (user) => {
     return res;
   } catch (err) {
     return err;
+  }
+};
+
+export const getUser = async (username, dispatch) => {
+  dispatch(getUserStart());
+  try {
+    const res = await axios.get(`/auth/?username=${username}`);
+    dispatch(getUserSuccess(res.data));
+  } catch (err) {
+    dispatch(getUserFailure());
   }
 };
 

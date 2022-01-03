@@ -9,7 +9,8 @@ const Container = styled.div`
 const MAINTABLE = styled.table`
   margin-bottom: 1px;
   width: 100%;
-  background-color: #a79ea2e6;
+  background-color: whitesmoke;
+  border-bottom: 1px solid black;
 `;
 const TABLE = styled.table`
   margin-bottom: 2px;

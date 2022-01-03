@@ -9,7 +9,6 @@ import Login from "./pages/Login";
 import Home from "./pages/Home";
 import Admin from "./pages/Admin";
 import Register from "./pages/Register";
-import Profile from './pages/Profile';
 import ForgotPass from './components/ForgotPass';
 
 function App() {
@@ -32,7 +31,6 @@ function App() {
           path="/register"
           element={user ? <Navigate to="/" /> : <Register />}
         />
-        <Route exact path="/profile" element={user ? <Navigate to="/" /> : <Profile />} />
         <Route exact path="/admin" element={user? <Admin />:<Login />} />
         <Route exact path="/forgot_pass" element={user? <Home />:<ForgotPass title="Forgot Password" />} />
         <Route exact path="/reset_pass/:userId/:token" element={user? <Home />:<ForgotPass title="Reset Password" />} />

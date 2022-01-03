@@ -23,7 +23,9 @@ const Label = styled.label`
 const Input = styled.input`
   outline: none;
   margin-bottom: 10px;
-`;
+  padding: 10px;
+  width: 30%;
+  `;
 const Button = styled.button`
   width: 100px;
   padding: 5px;
@@ -55,7 +57,7 @@ const ForgotPass = ({ title }) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    email && forgotPass(email).then((res) => setRes(res));
+    email && forgotPass(email.toLocaleLowerCase()).then((res) => setRes(res));
     password && resetPass(password, userId, token).then((res) => setRes(res));
   };
 
@@ -71,7 +73,7 @@ const ForgotPass = ({ title }) => {
               <Input
                 type="email"
                 name="email"
-                placeholder="Email"
+                placeholder="Your Email"
                 value={email}
                 required
                 onChange={(e) => setEmail(e.target.value)}

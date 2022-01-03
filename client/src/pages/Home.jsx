@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
-import { getEntry } from "../redux/apiCalls";
+import { getEntry, getUser } from "../redux/apiCalls";
 import { useEffect } from "react";
 import { mobile } from "../responsive";
 import Topbar from "../components/Topbar";
@@ -41,7 +41,7 @@ const Admin = () => {
   let year = p.year?p.year:d.getFullYear();
   let prevMonthId, prevMonth, prevYear;
 
-  if (monthId === "0") {
+  if (monthId === 0) {
     prevMonthId = 11;
     prevYear = year - 1;
     prevMonth = "December";
@@ -56,6 +56,9 @@ const Admin = () => {
     getEntry(user.username, monthId, year, dispatch);
   }, [user, dispatch, monthId, year]);
 
+  useEffect(()=>{
+    getUser(user.username, dispatch);
+  }, [user.username, dispatch])
 
   return (
     <Container>
