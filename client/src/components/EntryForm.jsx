@@ -4,10 +4,14 @@ import { addEntry, updateKey } from "../redux/apiCalls";
 import { useState } from "react";
 import UpdateUser from "./UpdateUser";
 
+const ForgotClick = styled.button`
+  outline: none;
+  border: none;
+  cursor: pointer;
+`;
 const Form = styled.form`
   flex: 1;
 `;
-
 const Title = styled.div`
   color: #20ad4ae8;
   font-weight: bolder;
@@ -126,16 +130,11 @@ const Error = styled.div`
   cursor: pointer;
 `;
 
-const ForgotClick = styled.button`
-  outline: none;
-  border: none;
-  cursor: pointer;
-`;
-
 const MealsContainer = styled.div`
   display: flex;
   flex-wrap: wrap;
 `;
+const Left = styled.div``;
 
 const EntryForm = () => {
   const dispatch = useDispatch();
@@ -221,128 +220,132 @@ const EntryForm = () => {
           </ModalContent>
         </Modal>
       )}
-
       {/* Admin Form */}
-      <Form onSubmit={handleSubmit}>
-        {/* Start Form Inputs */}
-        <Title>Submit Todays Entry</Title>
-        <br />
-        {/* If Error Fetched By Server */}
-        {error.status === 200 && (
-          <Error
-            style={{
-              color: "#270",
-              backgroundColor: "#DFF2BF",
-              margin: "10px 0",
-              padding: "10px",
-              borderRadius: "3px 3px 3px 3px",
-            }}
-          >
-            Entry Added Successfully.
-          </Error>
-        )}
-        {error.status === 401 && (
-          <Error
-            style={{
-              color: "#D8000C",
-              backgroundColor: "#FFBABA",
-              margin: "10px 0",
-              padding: "10px",
-              borderRadius: "3px 3px 3px 3px",
-            }}
-          >
-            {error.responseText.slice(1, -1)}
-          </Error>
-        )}
-        <Top>
-          <InputTitle>
-            Money Spent:
-            <Input
-              style={{ width: "60px", margin: "3px" }}
-              type="number"
-              name="spent"
-              value={inputs.spent}
-              onChange={handleChange}
-            />
-          </InputTitle>
-          <InputTitle>
-            Reserved Money:
-            <Input
-              style={{ width: "60px", margin: "3px" }}
-              type="number"
-              name="reserved"
-              value={inputs.reserved}
-              onChange={handleChange}
-            />
-          </InputTitle>
+      <Left>
+        <Form onSubmit={handleSubmit}>
+          {/* Start Form Inputs */}
+          <Title>Submit Todays Entry</Title>
+          <br />
+          {/* If Error Fetched By Server */}
+          {error.status === 200 && (
+            <Error
+              style={{
+                color: "#270",
+                backgroundColor: "#DFF2BF",
+                margin: "10px 0",
+                padding: "10px",
+                borderRadius: "3px 3px 3px 3px",
+              }}
+            >
+              Entry Added Successfully.
+            </Error>
+          )}
+          {error.status === 401 && (
+            <Error
+              style={{
+                color: "#D8000C",
+                backgroundColor: "#FFBABA",
+                margin: "10px 0",
+                padding: "10px",
+                borderRadius: "3px 3px 3px 3px",
+              }}
+            >
+              {error.responseText.slice(1, -1)}
+            </Error>
+          )}
+          <Top>
+            <InputTitle>
+              Money Spent:
+              <Input
+                style={{ width: "60px", margin: "3px" }}
+                type="number"
+                name="spent"
+                value={inputs.spent}
+                onChange={handleChange}
+              />
+            </InputTitle>
+            <InputTitle>
+              Reserved Money:
+              <Input
+                style={{ width: "60px", margin: "3px" }}
+                type="number"
+                name="reserved"
+                value={inputs.reserved}
+                onChange={handleChange}
+              />
+            </InputTitle>
 
+            <InputTitle>
+              By:
+              <Select
+                name="by"
+                value={inputs.by}
+                onChange={handleChange}
+                required
+              >
+                <option value="" disabled>
+                  Select
+                </option>
+                {user.members.map((i) => (
+                  <option value={i} key={i}>
+                    {i}
+                  </option>
+                ))}
+              </Select>
+            </InputTitle>
+          </Top>
           <InputTitle>
-            By:
-            <Select
-              name="by"
-              value={inputs.by}
+            Manager Key:
+            <Input
+              style={{ fontSize: "12px", width: "70px" }}
+              type="number"
+              placeholder="0000"
+              name="admin_key"
+              value={inputs.admin_key}
               onChange={handleChange}
               required
-            >
-              <option value="" disabled>
-                Select
-              </option>
-              {user.members.map((i) => (
-                <option value={i} key={i}>
-                  {i}
-                </option>
-              ))}
-            </Select>
+            />
           </InputTitle>
-        </Top>
-        <InputTitle>
-          Manager Key:
-          <Input
-            style={{ fontSize: "12px", width: "70px" }}
-            type="number"
-            placeholder="0000"
-            name="admin_key"
-            value={inputs.admin_key}
-            onChange={handleChange}
-            required
-          />
-        </InputTitle>
-        Can't Remember (
-        <ForgotClick onClick={() => setPrompt(true)}>?</ForgotClick>)
-        {/* Meals Container */}
-        <MealsContainer>
-          <div
-            style={{
-              textDecoration: "underline overline",
-              marginBottom: "3px",
-              marginTop: "3px",
-            }}
-          >
-            Meals:{" "}
-          </div>
-          {user.members.map((i) => (
-            <InputTitle key={i} style={{ margin: "10px 0px 0px 10px" }}>
-              {i}:
-              <Input
-                style={{ width: "60px" }}
-                type="number"
-                name={i}
-                value={meals[i]}
-                onChange={handleMeals}
-                required
-              ></Input>
-            </InputTitle>
-          ))}
-        </MealsContainer>
-        {/* If Button is Loading */}
-        {loading && (
-          <ButtonOnLoad disabled>
-            <i className="fa fa-spinner fa-spin"></i> Submitting
-          </ButtonOnLoad>
-        )}
-        {/* Normal Button */}
-        {!loading && <Button>Submit</Button>}
-      </Form>
+
+          {/* Meals Container */}
+          <MealsContainer>
+            <div
+              style={{
+                textDecoration: "underline overline",
+                marginBottom: "3px",
+                marginTop: "3px",
+              }}
+            >
+              Meals:
+            </div>
+            {user.members.map((i) => (
+              <InputTitle key={i} style={{ margin: "10px 0px 0px 10px" }}>
+                {i}:
+                <Input
+                  style={{ width: "60px" }}
+                  type="number"
+                  name={i}
+                  value={meals[i]}
+                  onChange={handleMeals}
+                  required
+                ></Input>
+              </InputTitle>
+            ))}
+          </MealsContainer>
+          {/* If Button is Loading */}
+          {loading && (
+            <ButtonOnLoad disabled>
+              <i className="fa fa-spinner fa-spin"></i> Submitting
+            </ButtonOnLoad>
+          )}
+          {/* Normal Button */}
+          {!loading && <Button>Submit</Button>}
+        </Form>
+        <p>
+          Can't Remember Key (
+          <ForgotClick onClick={() => setPrompt(true)}>?</ForgotClick>)
+        </p>
+      </Left>
       <UpdateUser />
       <br />
     </>

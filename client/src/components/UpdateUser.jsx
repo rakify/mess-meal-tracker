@@ -154,7 +154,7 @@ export default function UpdateUser({ admin }) {
             {next ? <Label>Add Yourself: </Label> : <Label>Members: </Label>}
             {user.members.map((i) => i + ", ")}
             <Input
-              style={{textTransform: "capitalize"}}
+              style={{ textTransform: "capitalize" }}
               type="text"
               name="member"
               maxLength="20"
@@ -195,7 +195,13 @@ export default function UpdateUser({ admin }) {
               required
             />
             <br />
-            <Button disabled={inputs.member.length===0 && inputs.email===user.email}>Update</Button>
+            <Button
+              disabled={
+                inputs.member.length === 0 && inputs.email === user.email
+              }
+            >
+              Update
+            </Button>
           </>
         )}
       </Form>

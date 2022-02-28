@@ -6,7 +6,6 @@ const cors = require("cors");
 const authRoute = require("./routes/auth");
 const entriesRoute = require("./routes/entries");
 
-
 //connect to db
 mongoose
   .connect(process.env.DB_CONNECTION, {
@@ -22,20 +21,9 @@ mongoose
 
 //middlewares
 //we should use them before routes
-const whitelist = [
-  "http://localhost:5000",
-  "http://localhost:3000",
-  "http://localhost:4000",
-];
 app.use(
   cors({
-    origin: function (origin, callback) {
-      if (whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: true, // allow all
     credentials: true, //access-control-allow-credentials:true
     optionSuccessStatus: 200,
   })

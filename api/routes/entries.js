@@ -66,8 +66,9 @@ router.get("/:username/:year/:month", async (req, res) => {
     const month = parseInt(req.params.month);
     const year = parseInt(req.params.year);
     const fromDate = new Date(year, month, 1);
-    const daysInMonth = new Date(year, month+1, 0).getDate();
-    const toDate = new Date(year, month, daysInMonth+1);
+    //const daysInMonth = new Date(year, month+1, 0).getDate();
+    //console.log(daysInMonth);
+    const toDate = new Date(year, month+1, 1);
   
     let entries = await Entry.find({
       user: req.params.username,

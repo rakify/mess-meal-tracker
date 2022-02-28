@@ -25,15 +25,17 @@ router.post("/register", async (req, res) => {
 //LOGIN
 router.post("/login", async (req, res) => {
   try {
+    console.log(req.body)
     const user = await User.findOne({ username: req.body.username });
-    if(!user) return res.status(401).json("User not found!");
+    if (!user) return res.status(401).json("User not found!okk");
 
     const validPassword = CryptoJS.AES.decrypt(
       user.password,
       process.env.pass_secret
     ).toString(CryptoJS.enc.Utf8);
-    
-    if(validPassword !== req.body.password) return res.status(401).json("Wrong credentials!");
+
+    if (validPassword !== req.body.password)
+      return res.status(401).json("Wrong credentials!");
 
     const accessToken = jwt.sign(
       {
@@ -106,7 +108,6 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
             );
         }
       });
-      
     } catch (err) {
       return res.status(500).json(err);
     }
@@ -148,7 +149,7 @@ router.get("/", async (req, res) => {
       ? await User.findById(userId)
       : await User.findOne({ username: username });
     const { password, admin_key, ...others } = user._doc;
-    res.status(200).json({...others});
+    res.status(200).json({ ...others });
   } catch (err) {
     res.status(500).json(err);
   }
@@ -161,7 +162,7 @@ router.post("/forgot-pass", async (req, res) => {
   try {
     const user = await User.findOne({ email: email });
     if (!user) {
-     return res.status(404).json("No user found!");
+      return res.status(404).json("No user found!");
     }
     const secret = process.env.jwt_secret + user.password;
     const payload = {
@@ -226,7 +227,7 @@ router.post("/reset-pass/:id/:token", async (req, res) => {
           newPw,
           process.env.pass_secret
         ).toString();
-        
+
         await User.findByIdAndUpdate(user._id, {
           password: hash,
         });
