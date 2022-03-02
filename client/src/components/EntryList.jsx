@@ -29,6 +29,7 @@ const TR = styled.tr`
 `;
 const TH = styled.th`
   flex: 1;
+  width: 100px;
   text-align: left;
   border-bottom: 1px solid black;
   padding: 10px;
@@ -37,6 +38,7 @@ const TH = styled.th`
 `;
 const TD = styled.td`
   flex: 1;
+  width: 100px;
   text-align: left;
   padding: 10px;
   border-right: 1px solid white;
@@ -110,7 +112,7 @@ const Input = styled.input`
   border-radius: 16px;
 `;
 
-export default function EntryList(props) {
+export default function EntryList({ monthId, year, admin }) {
   const dispatch = useDispatch();
   const entries = useSelector((state) => state.data.entries);
   const user = useSelector((state) => state.user.currentUser);
@@ -118,6 +120,35 @@ export default function EntryList(props) {
   const [confirm, setConfirm] = useState("Confirm");
   const [id, setId] = useState(""); // if id is not empty modal will open
   const [key, setKey] = useState("");
+
+  const Month = [];
+  Month[0] = "January";
+  Month[1] = "February";
+  Month[2] = "March";
+  Month[3] = "April";
+  Month[4] = "May";
+  Month[5] = "June";
+  Month[6] = "July";
+  Month[7] = "August";
+  Month[8] = "September";
+  Month[9] = "October";
+  Month[10] = "November";
+  Month[11] = "December";
+
+  const d = new Date();
+  const date = d.getDate();
+  let month, displayingMonth;
+
+  if (monthId === "0") {
+    monthId = 11;
+    year -= 1;
+    month = "December";
+    displayingMonth = "January";
+  } else {
+    monthId -= 1;
+    month = Month[monthId];
+    displayingMonth = Month[monthId + 1];
+  }
 
   const deleteHandler = () => {
     setConfirm("Deleting..");
@@ -173,12 +204,12 @@ export default function EntryList(props) {
         )}
 
         <TABLE>
-          <CAPTION>{props.month} Report</CAPTION>
+          <CAPTION>{displayingMonth} Report</CAPTION>
           {entries.length === 0 ? (
-           <>
-           <h3>As empty as a politician's promises. ツ</h3>
-           <h4>Lets start updating data by clicking on your username.</h4>
-           </>
+            <>
+              <h3>As empty as a politician's promises. ツ</h3>
+              <h4>Lets start updating data by clicking on your username.</h4>
+            </>
           ) : (
             <>
               <TBODY>
@@ -191,7 +222,7 @@ export default function EntryList(props) {
                     <TH key={i}>{i}</TH>
                   ))}
                   <TH>Daily Total</TH>
-                  {props.admin && <TH>Actions</TH>}
+                  {admin && <TH>Actions</TH>}
                 </TR>
               </TBODY>
               {entries.length > 0 &&
@@ -208,9 +239,8 @@ export default function EntryList(props) {
                         </TD>
                       ))}
                       <TD>{item?.totalMeals}</TD>
-                      {props.admin &&
-                        (props.date === item.date ||
-                        props.date - 1 === item.date ? (
+                      {admin &&
+                        (date === item.date || date - 1 === item.date ? (
                           <TD onClick={() => setId(item._id)}> 🗑️</TD>
                         ) : (
                           <TD></TD>
@@ -222,14 +252,13 @@ export default function EntryList(props) {
           )}
         </TABLE>
       </Container>
-      {!props.admin && (
-        <Link
-          to={{ pathname: `/${props.prevYear}/${props.prevMonthId}` }}
-          style={{ textDecoration: "none" }}
-        >
-          ❮ {props.prevMonth}, {props.prevYear} Report
-        </Link>
-      )}
+
+      <Link
+        to={{ pathname: `/${year}/${monthId}` }}
+        style={{ textDecoration: "none" }}
+      >
+        ❮ {month}, {year} Report
+      </Link>
     </>
   );
 }
