@@ -87,6 +87,7 @@ const FinalReport = ({ admin }) => {
   for (let i = 0; i < user.members.length; i++) {
     initialReserved[user.members[i]] = 0;
   }
+  //console.log(initialReserved)
 
   for (const i in entries) {
     const by = entries[i].by;
@@ -151,7 +152,7 @@ const FinalReport = ({ admin }) => {
               <TD>
                 {isNaN(initialReserved[i] - initialMeals[i] * mealRate)?"0.00":(initialReserved[i] - initialMeals[i] * mealRate).toFixed(2)}
               </TD>
-              {admin && initialMeals[i] === 0 && initialReserved[i] === 0 ? (
+              {admin && initialMeals[i] === 0 && initialReserved[i] <= 1 ? (
                 <TD>
                   <Input
                     type="number"

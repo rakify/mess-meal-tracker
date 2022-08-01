@@ -7,11 +7,20 @@ const EntrySchema = new mongoose.Schema(
       type: Number,
       unique: false,
     },
-    spent: Number,
-    reserved: Number,
+    spent: {
+      type: Number,
+      default: 0,
+    },
+    reserved: {
+      type: Number,
+      default: 0,
+    },
     by: String,
     meals: Object,
-    totalMeals: Number,
+    totalMeals: {
+      type: Number,
+      default: 0,
+    },
   },
   { timestamps: true }
 );

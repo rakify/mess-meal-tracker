@@ -2,9 +2,14 @@ const router = require("express").Router();
 const Entry = require("../models/Entry");
 const User = require("../models/User");
 const { verifyToken } = require("./verifyToken");
+const { entryValidation } = require("../middlewares/validation");
 
 // CREATE A Entry
 router.post("/", verifyToken, async (req, res) => {
+  const { error } = entryValidation(req.body);
+
+  if (error) return res.status(400).json(error.details[0]);
+
   const user = await User.findById(req.user.id);
   if (user.admin_key != req.body.admin_key) {
     return res
@@ -14,7 +19,7 @@ router.post("/", verifyToken, async (req, res) => {
   const newEntry = new Entry(req.body);
   try {
     savedEntry = await newEntry.save();
-    res.status(200).json(savedEntry);
+    res.status(201).json(savedEntry);
   } catch (err) {
     res.status(500).json(err);
   }

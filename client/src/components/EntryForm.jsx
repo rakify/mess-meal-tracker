@@ -156,6 +156,8 @@ const EntryForm = () => {
   const [error, setError] = useState({}); // after submitting show result
   const [confirm, setConfirm] = useState("Confirm"); // after confirming key show loading animation
   const [loading, setLoading] = useState(false); // after submitting show loading animation
+
+
   //set initialMeals per member as 0
   let initialMeals = {};
   for (let i = 0; i < user.members.length; i++) {
@@ -184,10 +186,13 @@ const EntryForm = () => {
       totalMeals += meals[i];
     }
     addEntry({ ...inputs, meals, totalMeals }, dispatch).then((res) => {
-      setError(res.request);
+      //console.log(res.response.data.message);
+      setError(res);
+      console.log(res.request)
       setLoading(false);
     });
   };
+
 
   const requestKey = () => {
     setConfirm(`Please Wait..`);
@@ -222,12 +227,12 @@ const EntryForm = () => {
       )}
       {/* Admin Form */}
       <Left>
-        <Form onSubmit={handleSubmit}>
+        <Form onSubmit={handleSubmit} noValidate>
           {/* Start Form Inputs */}
           <Title>Submit Todays Entry</Title>
           <br />
           {/* If Error Fetched By Server */}
-          {error.status === 200 && (
+          {error?.request?.status === 201? (
             <Error
               style={{
                 color: "#270",
@@ -238,9 +243,7 @@ const EntryForm = () => {
               }}
             >
               Entry Added Successfully.
-            </Error>
-          )}
-          {error.status === 401 && (
+            </Error>):error?.request?.status === 400? (
             <Error
               style={{
                 color: "#D8000C",
@@ -250,9 +253,19 @@ const EntryForm = () => {
                 borderRadius: "3px 3px 3px 3px",
               }}
             >
-              {error.responseText.slice(1, -1)}
-            </Error>
-          )}
+               {error?.response?.data?.message}
+            </Error>):error?.request?.status === 401?(
+            <Error
+              style={{
+                color: "#D8000C",
+                backgroundColor: "#FFBABA",
+                margin: "10px 0",
+                padding: "10px",
+                borderRadius: "3px 3px 3px 3px",
+              }}
+            >
+               {error?.request?.responseText.slice(1, -1)}
+            </Error>):""}
           <Top>
             <InputTitle>
               Money Spent:
