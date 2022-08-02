@@ -25,7 +25,7 @@ router.post("/register", async (req, res) => {
 //LOGIN
 router.post("/login", async (req, res) => {
   try {
-    console.log(req.body)
+    console.log(req.body);
     const user = await User.findOne({ username: req.body.username });
     if (!user) return res.status(401).json("User not found!okk");
 
@@ -112,6 +112,12 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
       return res.status(500).json(err);
     }
   } else {
+    console.log(req.body);
+    let members = req.body.members;
+    const membersSet = new Set(members);
+    if (members.length !== membersSet.size) {
+      return res.status(401).json("Each member must have different name.");
+    }
     if (req.body.password) {
       req.body.password = CryptoJS.AES.encrypt(
         req.body.password,
