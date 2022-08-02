@@ -5,7 +5,6 @@ import { updateUser } from "../redux/apiCalls";
 import { updateKey } from "./../redux/apiCalls";
 
 const Form = styled.form`
-  flex: 1;
 `;
 
 const Title = styled.div`
@@ -24,11 +23,15 @@ const Label = styled.label`
   font-weight: bolder;
 `;
 const Button = styled.button`
-  background-color: #132513;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-weight: 250;
+background-color: #333;
+width: 70px;
+border: none;
+color: white;
+padding: 2px;
+cursor: pointer;
+border-radius: 12px;
+margin-top:10px;
+margin-left:50%
 `;
 
 const Error = styled.div`
@@ -178,7 +181,7 @@ export default function UpdateUser({ admin }) {
               </>
             )}
             <br />
-            <Label>Your Access Key: </Label>
+            <Label>Your Key: </Label>
             <Input
               style={{
                 outline: "none",

@@ -10,10 +10,6 @@ import FinalReport from "../components/FinalReport";
 import UpdateUser from "../components/UpdateUser";
 
 const Container = styled.div``;
-const Menu = styled.div`
-  display: flex;
-  ${mobile({ flexDirection: "column" })}
-`;
 
 const Admin = () => {
   const dispatch = useDispatch();
@@ -51,10 +47,8 @@ const Admin = () => {
       {user.members.length === 0 && <UpdateUser />}
       {user.members.length > 0 && (
         <>
-          <Menu>
             {user && <EntryForm />}
             {/* {user && <MemberForm />} */}
-          </Menu>
           <br />
           <br />
           <FinalReport admin={true} />

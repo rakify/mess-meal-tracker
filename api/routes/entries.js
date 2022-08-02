@@ -6,6 +6,9 @@ const { entryValidation } = require("../middlewares/validation");
 
 // CREATE A Entry
 router.post("/", verifyToken, async (req, res) => {
+  if (req.body.spent === "") req.body.spent = 0;
+  if (req.body.reserved === "") req.body.reserved = 0;
+  //console.log(req.body);
   const { error } = entryValidation(req.body);
 
   if (error) return res.status(400).json(error.details[0]);
@@ -16,8 +19,9 @@ router.post("/", verifyToken, async (req, res) => {
       .status(401)
       .json("Key doesn't match. Please reset the key or try again.");
   }
-  const newEntry = new Entry(req.body);
+
   try {
+    const newEntry = new Entry(req.body);
     savedEntry = await newEntry.save();
     res.status(201).json(savedEntry);
   } catch (err) {
@@ -73,8 +77,8 @@ router.get("/:username/:year/:month", async (req, res) => {
     const fromDate = new Date(year, month, 1);
     //const daysInMonth = new Date(year, month+1, 0).getDate();
     //console.log(daysInMonth);
-    const toDate = new Date(year, month+1, 1);
-  
+    const toDate = new Date(year, month + 1, 1);
+
     let entries = await Entry.find({
       user: req.params.username,
       $and: [{ createdAt: { $gt: fromDate } }, { createdAt: { $lt: toDate } }],

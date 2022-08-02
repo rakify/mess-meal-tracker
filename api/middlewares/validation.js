@@ -11,11 +11,11 @@ module.exports.entryValidation = entryValidation = (data) => {
     user: Joi.string().required(),
     date: Joi.number().required(),
     admin_key: Joi.required(),
-    spent: Joi.number().min(0).required(),
+    spent: Joi.number().required(),
     reserved: Joi.number().required(),
     by: Joi.string().required(),
     meals: Joi.object().required(),
-    totalMeals: Joi.number().min(0).required(),
+    totalMeals: Joi.number().required(),
   });
   return schema.validate(data);
 };

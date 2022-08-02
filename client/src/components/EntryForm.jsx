@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { useSelector, useDispatch } from "react-redux";
 import { addEntry, updateKey } from "../redux/apiCalls";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import UpdateUser from "./UpdateUser";
+import { mobile } from "../responsive";
 
 const ForgotClick = styled.button`
   outline: none;
@@ -57,6 +58,8 @@ const Button = styled.button`
   padding: 2px;
   cursor: pointer;
   border-radius: 12px;
+  margin-top:10px;
+  margin-left:10%
 `;
 const ButtonOnLoad = styled.button`
   background-color: #04aa6d;
@@ -130,12 +133,26 @@ const Error = styled.div`
   cursor: pointer;
 `;
 
-const MealsContainer = styled.div`
+const Container = styled.div`
   display: flex;
-  flex-wrap: wrap;
+  justify-content:space-between;
+  ${mobile({ flexDirection: "column" })}
 `;
+
 const Left = styled.div``;
 
+const MyButton = styled.button`
+border-radius:50%;
+width:25;
+height:25;
+background-color:white;
+color:green;
+&:active {
+  box-shadow: box-shadow:
+    7px 6px 28px 1px rgba(0, 0, 0, 0.24);
+  transform: translateY(4px);
+}
+`;
 const EntryForm = () => {
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user.currentUser);
@@ -156,7 +173,7 @@ const EntryForm = () => {
   const [error, setError] = useState({}); // after submitting show result
   const [confirm, setConfirm] = useState("Confirm"); // after confirming key show loading animation
   const [loading, setLoading] = useState(false); // after submitting show loading animation
-
+  const [totalMeals, setTotalMeals] = useState(0);
 
   //set initialMeals per member as 0
   let initialMeals = {};
@@ -172,19 +189,20 @@ const EntryForm = () => {
     });
   };
 
-  const handleMeals = (e) => {
-    setMeals((prev) => {
-      return { ...prev, [e.target.name]: e.target.valueAsNumber };
-    });
+  const handleMeals = (name, value) => {
+    setMeals({...meals, [name]: value});
   };
+  useEffect(()=>{
+    let total =0;
+    for (const i in meals) {
+      total += meals[i];
+    }
+    setTotalMeals(total)  
+  },[meals])
 
   const handleSubmit = (e) => {
     e.preventDefault();
     setLoading(true);
-    let totalMeals = 0;
-    for (const i in meals) {
-      totalMeals += meals[i];
-    }
     addEntry({ ...inputs, meals, totalMeals }, dispatch).then((res) => {
       //console.log(res.response.data.message);
       setError(res);
@@ -201,6 +219,7 @@ const EntryForm = () => {
 
   return (
     <>
+
       {/* Reset Key Modal */}
       {prompt && (
         <Modal>
@@ -225,9 +244,9 @@ const EntryForm = () => {
           </ModalContent>
         </Modal>
       )}
+      <Container>
       {/* Admin Form */}
       <Left>
-        <Form onSubmit={handleSubmit} noValidate>
           {/* Start Form Inputs */}
           <Title>Submit Todays Entry</Title>
           <br />
@@ -321,30 +340,36 @@ const EntryForm = () => {
           </InputTitle>
 
           {/* Meals Container */}
-          <MealsContainer>
-            <div
-              style={{
-                textDecoration: "underline overline",
-                marginBottom: "3px",
-                marginTop: "3px",
-              }}
-            >
+          <div style={{display:"flex", flexDirection:"column"}}>
+            <InputTitle>
               Meals:
-            </div>
-            {user.members.map((i) => (
-              <InputTitle key={i} style={{ margin: "10px 0px 0px 10px" }}>
-                {i}:
-                <Input
-                  style={{ width: "60px" }}
-                  type="number"
-                  name={i}
-                  value={meals[i]}
-                  onChange={handleMeals}
-                  required
-                ></Input>
-              </InputTitle>
-            ))}
-          </MealsContainer>
+            </InputTitle>
+            {user.members.map(i => (
+            <div style={{
+              display:"flex", 
+              flexDirection:"row",  
+              margin:2, 
+              borderLeft: "3px solid #2196F3",
+              paddingLeft:10,
+              backgroundColor: "#ddffff"
+              }}
+              key={i + i}>
+              <span style={{flex:2}}>{i}</span>
+              <div style={{flex:1, display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                <MyButton onClick={() => meals[i]!==0 && handleMeals(i, meals[i] - 1)}>
+                ▼
+                </MyButton>
+                <span>{meals[i]}</span>
+                <MyButton onClick={() => handleMeals(i, meals[i] + 1)}>
+                ▲
+                </MyButton>
+                </div>
+              </div>))}
+              <div>
+             <InputTitle>Total Meals: </InputTitle><big>{totalMeals}</big></div>
+          </div>
+
+
           {/* If Button is Loading */}
           {loading && (
             <ButtonOnLoad disabled>
@@ -352,15 +377,15 @@ const EntryForm = () => {
             </ButtonOnLoad>
           )}
           {/* Normal Button */}
-          {!loading && <Button>Submit</Button>}
-        </Form>
-        <p>
-          Can't Remember Key (
-          <ForgotClick onClick={() => setPrompt(true)}>?</ForgotClick>)
-        </p>
+          {!loading && <Button onClick={handleSubmit}>Submit</Button>}
       </Left>
       <UpdateUser />
       <br />
+    </Container>
+    <div style={{ display:"flex", justifyContent:"center"}}>
+          Can't Remember Key (
+          <ForgotClick onClick={() => setPrompt(true)}>Reset</ForgotClick>)
+    </div>
     </>
   );
 };
