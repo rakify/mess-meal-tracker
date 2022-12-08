@@ -88,7 +88,7 @@ router.put("/:id", verifyTokenAndAuthorization, async (req, res) => {
       });
 
       let mailOption = {
-        from: "irakibm@gmail.com",
+        from: "rakify14@gmail.com",
         to: updatedUser.email,
         subject: `Mess Meal Tracker - New Key`,
         text: `Dear ${updatedUser.username},\nIt seems that you requested to reset your admin key.\nHere is the key.\nKey: ${randomKey}\nThank you for using mess meal tracker.\nIf you have any query regarding the site, please reply to this mail.`,
