@@ -26,7 +26,7 @@ import {
 import axios from "axios";
 
 axios.defaults.withCredentials = true; //so its can set automatically the cookie i want
-//axios.defaults.baseURL = "/api/";
+axios.defaults.baseURL = "https://localhost:4000/api";
 
 export const logout = async () => {
   await axios.get("/auth/logout");
