@@ -35,6 +35,16 @@ app.use("/api/auth", authRoute);
 app.use("/api/entries", entriesRoute);
 
 const PORT = process.env.PORT || 4000;
+
+if(process.env.NODE_ENV=='production'){
+  const path = require('path')
+
+  app.get('/',(req,res)=>{
+      app.use(express.static(path.resolve(__dirname,'client','build')))
+      res.sendFile(path.resolve(__dirname,'client','build','index.html'))
+  })
+}
+
 app.listen(PORT, () => {
   console.log(`BACKEND SERVER IS RUNNING ON ${PORT}`);
 });

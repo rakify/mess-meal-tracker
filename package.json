@@ -10,11 +10,11 @@
     "nodemailer": "^6.7.1",
     "nodemon": "^2.0.14"
   },
-  "name": "api",
+  "name": "meal_tracker_api",
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "nodemon index.js"
+    "start": "node index.js"
   }
 }
