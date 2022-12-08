@@ -26,7 +26,7 @@ import {
 import axios from "axios";
 
 axios.defaults.withCredentials = true; //so its can set automatically the cookie i want
-axios.defaults.baseURL = "http://localhost:4000/api";
+axios.defaults.baseURL = "https://eumess.vercel.app/api";
 
 export const logout = async () => {
   await axios.get("/auth/logout");
